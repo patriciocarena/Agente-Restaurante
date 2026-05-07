@@ -1,7 +1,8 @@
 ---
 phase: 1
 slug: foundations
-status: draft
+status: approved
+reviewed_at: 2026-05-07T00:00:00Z
 shadcn_initialized: false
 preset: none
 created: 2026-05-07
@@ -70,15 +71,14 @@ touch targets are Phase 4's concern).
 | Role | Size | Weight | Line Height | Usage |
 |------|------|--------|-------------|-------|
 | Body | 14px | 400 (regular) | 1.5 | Form helper text, descriptive copy |
-| Label | 14px | 500 (medium) | 1.4 | Input labels, nav items |
+| Label | 14px | 600 (semibold) | 1.4 | Input labels, nav items |
 | Heading | 20px | 600 (semibold) | 1.2 | Page headings ("Crear cuenta", "Iniciar sesión") |
-| Display | 28px | 700 (bold) | 1.1 | App name / brand in auth pages only |
+| Display | 28px | 600 (semibold) | 1.1 | App name / brand in auth pages only |
 
 Font family: `Inter, ui-sans-serif, system-ui, -apple-system, sans-serif`
 
-**Constraint:** Only 2 weights in use during implementation — regular (400) and semibold (600).
-The medium (500) label weight maps to semibold in practice if the font does not render
-a distinct 500 step. Bold (700) is display-only, used once per auth page.
+**Constraint:** Exactly 2 weights in use — regular (400) for Body, and semibold (600) for
+Label, Heading, and Display. No medium (500) or bold (700) weights.
 
 Source: defaults based on standard SaaS B2B dashboard patterns.
 
@@ -90,7 +90,7 @@ Source: defaults based on standard SaaS B2B dashboard patterns.
 |------|-------|-------|
 | Dominant (60%) | `#0f0f0f` (near-black) | Page background, outermost surface |
 | Secondary (30%) | `#1a1a1a` (dark card) | Auth card background, form container |
-| Accent (10%) | `#f97316` (orange-500) | Primary CTA button only |
+| Accent (10%) | `#f97316` (orange-500) | Primary CTA button + focus ring (--ring system token) |
 | Destructive | `#ef4444` (red-500) | Error alerts, form validation errors |
 
 **Rationale for dark theme in Phase 1:**
@@ -100,12 +100,13 @@ The restaurant operator context (late-night operations, glare reduction) also fa
 
 **Accent reserved for:**
 - Primary submit button on Signup page ("Crear cuenta")
-- Primary submit button on Login page ("Ingresar")
+- Primary submit button on Login page ("Ingresar al panel")
+- Focus ring (`--ring` system token) on all interactive elements
 - No other elements in Phase 1 use the orange accent.
 
 **Secondary semantic colors:**
 - `#22c55e` (green-500): reserved for Phase 2+ success states (not used in Phase 1)
-- `#f97316` stays off of links, borders, hover states — buttons only.
+- `#f97316` stays off of links, borders, hover states — CTA buttons and focus ring only.
 
 **Tailwind CSS custom property mapping** (set in `apps/frontend/src/index.css`):
 ```css
@@ -117,7 +118,7 @@ The restaurant operator context (late-night operations, glare reduction) also fa
   --foreground: 0 0% 95%;          /* #f2f2f2 near-white text */
   --muted-foreground: 0 0% 60%;    /* #999 subtle labels */
   --border: 0 0% 18%;              /* #2e2e2e subtle borders */
-  --ring: 24 95% 53%;              /* focus ring = accent */
+  --ring: 24 95% 53%;              /* focus ring = accent (orange-500) */
 }
 ```
 
@@ -132,7 +133,7 @@ copy (product is casual B2B for restaurant owners, not corporate).
 
 | Element | Copy |
 |---------|------|
-| Primary CTA — Login | "Ingresar" |
+| Primary CTA — Login | "Ingresar al panel" |
 | Primary CTA — Signup | "Crear cuenta" |
 | Secondary action — Login page | "¿No tenés cuenta? Registrate" |
 | Secondary action — Signup page | "¿Ya tenés cuenta? Iniciá sesión" |
@@ -176,6 +177,8 @@ Minimal set for Phase 1 pages. All from shadcn official registry.
 
 **Show/hide password toggle:** Use `lucide-react` `Eye` / `EyeOff` icons at 16px inside
 the password input right slot. Icon color: `--muted-foreground`. No third-party component.
+Accessibility: toggle button must carry `aria-label="Mostrar contraseña"` when the password
+is hidden and `aria-label="Ocultar contraseña"` when the password is visible.
 
 **Loading state:** Primary CTA button shows `lucide-react` `Loader2` icon (16px, animate-spin)
 + label grayed out during async auth call. Button is `disabled` during loading.
@@ -191,7 +194,7 @@ the password input right slot. Icon color: `--muted-foreground`. No third-party 
 - Auth card width: `w-full max-w-sm` (384px)
 - Card padding: 32px (xl token)
 - Vertical stack inside card: Display (app name) → Heading → email input → password input → CTA button → secondary link
-- App name display: "Agente Restaurante" at 28px bold, centered, `--foreground`
+- App name display: "Agente Restaurante" at 28px semibold, centered, `--foreground`
 - Page heading: "Iniciá sesión" at 20px semibold, centered
 - No logo/icon in Phase 1 (visual identity deferred)
 
@@ -239,6 +242,7 @@ Source: RESEARCH.md Pattern 1 (Pitfall 2 — JWT without restaurant_id on first 
 - Error alerts have `role="alert"` — screen reader announcement on error.
 - Minimum contrast ratio: 4.5:1 for body text (`#f2f2f2` on `#1a1a1a` = 12.6:1, passes AAA).
 - Tab order: email → password → CTA → secondary link.
+- Show/hide password toggle: `aria-label="Mostrar contraseña"` (hidden state) / `aria-label="Ocultar contraseña"` (visible state).
 
 ---
 
