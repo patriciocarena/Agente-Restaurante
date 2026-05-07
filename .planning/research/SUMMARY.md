@@ -1,7 +1,7 @@
 # Project Research Summary
 
 **Project:** Agente Restaurante (placeholder, marketing name TBD)
-**Domain:** Voice AI phone ordering SaaS for Argentine restaurants (rotiserías, casas de comidas, hamburgueserías)
+**Domain:** Voice AI phone ordering SaaS for Argentine **hamburgueserías** (focused vertical)
 **Researched:** 2026-05-07
 **Confidence:** MEDIUM
 
@@ -11,7 +11,7 @@ The standard 4-agent parallel research workflow (STACK / FEATURES / ARCHITECTURE
 
 ## Executive Summary
 
-The voice-AI restaurant ordering market is **growing fast and crowded in the US** (Loman, ConverseNow, Kea, VOICEplug, Slang.ai, ActiveMenus, Maple, Revmo) but **wide-open in Argentina/LATAM** in May 2026. US incumbents charge **$450–$600 USD/month flat** and target English-first QSR chains. Spanish-first Argentine SMB rotiserías and hamburgueserías are unserved by these players because of dialect, telephony regulation, payment localization (Mercado Pago), and price sensitivity.
+The voice-AI restaurant ordering market is **growing fast and crowded in the US** (Loman, ConverseNow, Kea, VOICEplug, Slang.ai, ActiveMenus, Maple, Revmo) but **wide-open in Argentina/LATAM** in May 2026. US incumbents charge **$450–$600 USD/month flat** and target English-first QSR chains. The chosen ICP is **focused on hamburgueserías argentinas exclusivamente** — segmento creciente, menú estructurado (combos + papas + bebidas + modificadores predecibles tipo "doble", "completa", "sin cebolla") que se presta a un system prompt afinado, mix retiro+delivery. Posicionamiento: "la AI que atiende el teléfono de tu hamburguesería". TAM exacto del vertical AR hamburgueserías a validar en Phase 1 research; riesgo de ceiling más bajo que un ICP amplio.
 
 The proposed Tier 1 stack (Vapi + Gemini 2.5 Flash + Azure es-AR + Deepgram + Twilio AR + Supabase + Mercado Pago) is **viable for shipping in 2 weeks** but **margin-negative at $99/mo flat** given infra costs of ~$210/mo per restaurant at 30 calls/day. The pre-defined Phase 7 cost-optimization migration to Pipecat + Telnyx (Tier 2) is what eventually makes the unit economics work. Until then, target $149/mo flat or hybrid pricing ($99 + $1.50/extra call).
 
@@ -49,7 +49,7 @@ The user's pre-selected stack is sensible for v1. Key adjustments locked in PROJ
 - KDS dashboard real-time, dark mode, responsive (cheap Android tablet in kitchen)
 - Order status flow: NUEVO → EN PREPARACIÓN → LISTO → ENTREGADO with audible new-order alert
 - Out-of-hours behavior: agent says "estamos cerrados, atendemos de X a Y" and hangs up
-- **Delivery support** — capture address as text (no geocoding) — required because pilot Wonder is delivery-heavy
+- **Delivery support** — capture address as text (no geocoding) — table stakes para hamburgueserías AR (mix retiro+delivery, ~50/50 según vertical)
 - Mercado Pago monthly subscription with auto-suspension on missed payment
 - Per-call observability: duration, cost, transcript, errors
 

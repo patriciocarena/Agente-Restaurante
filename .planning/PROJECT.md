@@ -2,7 +2,7 @@
 
 ## What This Is
 
-SaaS multi-tenant que automatiza el teléfono del restaurante: cuando un cliente llama, una agente de voz en español rioplatense atiende, toma el pedido completo (con modificadores, cantidades, retiro o delivery con dirección), lo confirma en voz alta y lo entrega a la cocina vía Kitchen Display System (dashboard real-time). Pensado para **rotiserías, casas de comidas y hamburgueserías argentinas**, donde el teléfono se satura en hora pico y se pierden pedidos.
+SaaS multi-tenant que automatiza el teléfono de la **hamburguesería**: cuando un cliente llama, una agente de voz en español rioplatense atiende, toma el pedido completo (con modificadores, cantidades, retiro o delivery con dirección), lo confirma en voz alta y lo entrega a la cocina vía Kitchen Display System (dashboard real-time). Vertical focalizado en **hamburgueserías argentinas** (segmento creciente, menú estructurado con combos y modificadores predecibles, mix retiro+delivery), donde el teléfono se satura en hora pico y se pierden pedidos.
 
 ## Core Value
 
@@ -50,7 +50,7 @@ SaaS multi-tenant que automatiza el teléfono del restaurante: cuando un cliente
 
 ## Context
 
-- **Mercado**: Argentina, rotiserías + casas de comidas + hamburgueserías. Operadores con 1-3 locales, 20-60 pedidos telefónicos/día en hora pico. Hoy contratan personas para atender el teléfono o pierden pedidos cuando la cocina está saturada.
+- **Mercado**: Argentina, **hamburgueserías exclusivamente**. Operadores con 1-3 locales, 20-60 pedidos telefónicos/día en hora pico (típicamente noche, viernes/sábado). Hoy contratan personas para atender el teléfono o pierden pedidos cuando la cocina está saturada.
 - **Modelo de negocio**: SaaS suscripción mensual. Target pricing: $99-149 USD/mes flat con tope de uso (50-100 calls/día) o híbrido $99 + $1.50/llamada extra. Pricing definitivo se cierra después de research de competencia en Phase 0.
 - **Spec original del usuario**: vino con stack y schema bien especificados (Vapi + Gemini + ElevenLabs + Supabase + Twilio + React). Se identificaron 10 bugs/desviaciones críticas que se corrigen en código (ver Key Decisions abajo).
 - **Piloto identificado**: **Wonder Hamburguesería** — Villa Allende, Córdoba. Hamburguesas con precios económicos. Horario: 19:00–23:00 (solo noche). Menú con precios pendiente de obtener antes de Phase 2 (será el seed de testing real). El piloto es delivery-heavy, lo que llevó a reincorporar `delivery` a v1.
@@ -72,7 +72,7 @@ SaaS multi-tenant que automatiza el teléfono del restaurante: cuando un cliente
 
 | Decision | Rationale | Outcome |
 |----------|-----------|---------|
-| ICP v1 = rotiserías + casas de comidas + hamburgueserías | Excluimos pizzerías (delivery-extremo, complejidad de tarifas y zonas). Hamburgueserías quedaron incluidas porque el piloto identificado (Wonder, Córdoba) es una. | — Pending |
+| ICP v1 = solo hamburgueserías (revisado) | Tras varias iteraciones (pizzerías → rotiserías → +hamburgueserías → solo hamburgueserías), el usuario decidió focalizar exclusivamente en hamburgueserías. Ventajas: posicionamiento nítido, system prompt afinado a un menú típico (combos, papas, modificadores estándar), marketing más directo. Riesgo: TAM más chico — validar tamaño del mercado AR de hamburgueserías en Phase 1 research. | — Pending |
 | WhatsApp diferido al MVP | Templates Meta tardan 1-3 semanas en aprobarse, bloquearía el ship. KDS cubre la necesidad inmediata. | — Pending |
 | Delivery SÍ va en v1 (revisado) | Decisión inicial fue solo pickup, pero el piloto Wonder es delivery-heavy. v1 captura dirección + zona como texto, sin tracking de cadetes. El restaurante despacha con su sistema actual. | — Pending |
 | Auth + Billing real desde v1 | El usuario quiere SaaS real, no pilot manual. Onboarding y MP Subscriptions van en Phase 1 y 5. | — Pending |
