@@ -17,7 +17,7 @@ SaaS multi-tenant que automatiza el teléfono de la **hamburguesería**: cuando 
 ### Active
 
 - [ ] El restaurante puede registrarse, loguearse y ver su dashboard aislado de otros (auth + RLS multi-tenant real)
-- [ ] El restaurante puede armar y editar su menú (categorías, items, precios, modificadores, disponibilidad on/off mid-shift)
+- [ ] El restaurante puede armar y editar su menú: categorías, items, **grupos de opciones con cardinalidad (min/max selecciones por grupo)**, items con **precio variable según opción**, modificadores con `price_delta`, disponibilidad on/off mid-shift
 - [ ] El restaurante configura horario de atención por día de la semana
 - [ ] El restaurante configura zonas/áreas de delivery que cubre (texto libre o lista de barrios)
 - [ ] Cada restaurante tiene su propio número Twilio AR asignado en onboarding
@@ -53,7 +53,7 @@ SaaS multi-tenant que automatiza el teléfono de la **hamburguesería**: cuando 
 - **Mercado**: Argentina, **hamburgueserías exclusivamente**. Operadores con 1-3 locales, 20-60 pedidos telefónicos/día en hora pico (típicamente noche, viernes/sábado). Hoy contratan personas para atender el teléfono o pierden pedidos cuando la cocina está saturada.
 - **Modelo de negocio**: SaaS suscripción mensual. Target pricing: $99-149 USD/mes flat con tope de uso (50-100 calls/día) o híbrido $99 + $1.50/llamada extra. Pricing definitivo se cierra después de research de competencia en Phase 0.
 - **Spec original del usuario**: vino con stack y schema bien especificados (Vapi + Gemini + ElevenLabs + Supabase + Twilio + React). Se identificaron 10 bugs/desviaciones críticas que se corrigen en código (ver Key Decisions abajo).
-- **Piloto identificado**: **Wonder Hamburguesería** — Villa Allende, Córdoba. Hamburguesas con precios económicos. Horario: 19:00–23:00 (solo noche). Menú con precios pendiente de obtener antes de Phase 2 (será el seed de testing real). El piloto es delivery-heavy, lo que llevó a reincorporar `delivery` a v1.
+- **Piloto identificado**: **Wonder Hamburguesería** — Av. Sáenz Peña 112, Villa Allende, Córdoba (X5105). Tel: +54 9 3543 20-8989. Horario real (extraído de su tienda Pedix): Lun-Mar y Dom 20:00–24:00, Mié-Sáb 20:00–00:30 (solo noche). Menú completo extraído: 74 productos en 10 categorías (Hamburguesas, Lomitos, Papas, Snacks, Ensaladas, Wraps, Bebidas, Postres Süss, Kit Wonder, Promociones), precios de $1.900 a $35.999 ARS. Detalle en `.planning/research/wonder-menu.md`. Raw JSON en `wonder-pedix-raw.json`. Seed listo para Phase 2.
 - **Competencia**: Sin info todavía. Research phase va a investigar tanto referentes US (Slang.ai, ConverseNow, Kea, Newo) como posibles competidores LATAM/AR — hay que ver si alguien local ya está atacando este vertical y cómo.
 
 ## Constraints
@@ -86,6 +86,8 @@ SaaS multi-tenant que automatiza el teléfono de la **hamburguesería**: cuando 
 | Tier-based cost optimization (Phase 7 explícita) | A $99/mes flat el Tier 1 deja margen negativo. Migración a Pipecat + Telnyx (Tier 2) es fase real con trigger objetivo (≥3 clientes pagos), no deuda técnica vaga. | — Pending |
 | Spec original voiceId "Fernanda" → corregido a `es-AR-ElenaNeural` | ElevenLabs no acepta nombres como voiceId, solo IDs alfanuméricos. Era bug que hubiera fallado en runtime. | — Pending |
 | Spec original `gemini-2.0-flash` → corregido a `gemini-2.5-flash` | Inconsistencia en el spec (header decía 2.5, config decía 2.0). 2.5 es mejor en español y mismo costo. | — Pending |
+| Schema de menú: option groups con cardinalidad + precio variable por opción (descubierto al parsear menú real de Wonder) | El spec original asumía `modifiers: [{name, price_delta}]` plano. Los menús reales tienen items sin precio base (la opción define el precio: ej. "Hamburguesa Veggie - elegí Mixta o Garbanzos") y grupos con min/max ("elegí 1 bebida", "elegí hasta 8 toppings"). Phase 1 schema y Phase 3 `confirm_order` deben modelarlo. | — Pending |
+| Horario real de Wonder: 20:00–24:00/24:30 (no 19-23h como inicialmente reportado) | Datos extraídos directamente de Pedix. Útil para system prompt + restaurant_hours seed en Phase 2. | — Pending |
 
 ## Evolution
 
