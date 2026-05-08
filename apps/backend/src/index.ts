@@ -25,8 +25,11 @@ app.use(express.json());
 app.use('/health', healthRouter);
 
 // Only listen if not under test runner.
+// Bind explicitly to 0.0.0.0 so Railway healthcheck (and any reverse proxy)
+// can reach the server. Default `app.listen(PORT)` may bind only to localhost
+// in some Node versions, breaking external probes.
 if (process.env.NODE_ENV !== 'test') {
-  app.listen(PORT, () => {
+  app.listen(PORT, '0.0.0.0', () => {
     logger.info('backend up', { port: PORT });
   });
 }
