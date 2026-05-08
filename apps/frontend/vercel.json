@@ -1,0 +1,7 @@
+{
+  "buildCommand": "cd ../.. && pnpm install --frozen-lockfile && pnpm --filter @agente-restaurante/frontend build",
+  "outputDirectory": "dist",
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
+}

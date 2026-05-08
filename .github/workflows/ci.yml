@@ -1,0 +1,32 @@
+name: CI
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with: { version: 9 }
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm -r --if-present run test
+      - run: pnpm --filter @agente-restaurante/backend exec tsc --noEmit
+      - run: pnpm --filter @agente-restaurante/frontend exec tsc --noEmit
+      - name: Build frontend
+        run: pnpm --filter @agente-restaurante/frontend build
+        env:
+          VITE_SUPABASE_URL: https://placeholder.supabase.co
+          VITE_SUPABASE_ANON_KEY: placeholder_anon_key
+      - name: SEC-04 service role key must not be in bundle
+        run: bash scripts/check-sec04.sh
+      - name: SEC-05 customer_phone must not appear in console.* in backend src
+        run: |
+          ! grep -RnE 'console\.(log|info|warn|error)\([^)]*customer_phone' apps/backend/src/
