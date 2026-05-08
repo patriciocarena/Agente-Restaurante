@@ -1,0 +1,14 @@
+{
+  "name": "agente-restaurante",
+  "private": true,
+  "packageManager": "pnpm@9.15.0",
+  "scripts": {
+    "build": "pnpm -r build",
+    "test": "pnpm -r test --run",
+    "lint": "pnpm -r lint",
+    "check-sec04": "bash scripts/check-sec04.sh"
+  },
+  "devDependencies": {
+    "typescript": "^6.0.3"
+  }
+}
