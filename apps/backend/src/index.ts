@@ -6,10 +6,10 @@ const app = express();
 const PORT = Number(process.env.PORT ?? 3000);
 
 // Fail-fast env validation. Missing any required var = crash before listen().
+// MERCADO_PAGO_ACCESS_TOKEN se agrega en Phase 5 (billing). No es requerido en Phase 1.
 const REQUIRED_ENV = [
   'SUPABASE_URL',
   'SUPABASE_SERVICE_ROLE_KEY',
-  'MERCADO_PAGO_ACCESS_TOKEN',
 ] as const;
 
 for (const key of REQUIRED_ENV) {
