@@ -1,0 +1,16 @@
+@import 'tailwindcss';
+
+:root {
+  --background: 0 0% 6%;           /* #0f0f0f */
+  --card: 0 0% 10%;                /* #1a1a1a */
+  --primary: 24 95% 53%;           /* #f97316 orange-500 */
+  --primary-foreground: 0 0% 100%;
+  --destructive: 0 84% 60%;        /* #ef4444 red-500 */
+  --foreground: 0 0% 95%;          /* #f2f2f2 */
+  --muted-foreground: 0 0% 60%;    /* #999 */
+  --border: 0 0% 18%;              /* #2e2e2e */
+  --ring: 24 95% 53%;              /* focus ring = primary */
+}
+
+html, body, #root { height: 100%; }
+body { font-family: Inter, ui-sans-serif, system-ui, -apple-system, sans-serif; }
