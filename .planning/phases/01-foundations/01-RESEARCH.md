@@ -727,7 +727,7 @@ grep -r "service.role\|SUPABASE_SERVICE_ROLE_KEY" apps/frontend/dist/ \
 
 ---
 
-## Open Questions
+## Open Questions (RESOLVED)
 
 1. **Twilio AR: ¿tiene Wonder acceso a documentación para número AR local?**
    - What we know: Twilio exige ID + domicilio AR para comprar número +54
