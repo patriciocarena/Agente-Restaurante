@@ -4,7 +4,7 @@
   "packageManager": "pnpm@9.15.0",
   "scripts": {
     "build": "pnpm -r build",
-    "test": "pnpm -r test --run",
+    "test": "pnpm -r --if-present run test",
     "lint": "pnpm -r lint",
     "check-sec04": "bash scripts/check-sec04.sh"
   },
