@@ -1,0 +1,15 @@
+# railway.toml (raíz del repo)
+# Railway detecta pnpm desde la raíz via packageManager en package.json.
+# El buildCommand instala todo el workspace y compila solo el backend.
+
+[build]
+builder = "NIXPACKS"
+buildCommand = "pnpm install --frozen-lockfile && pnpm --filter @agente-restaurante/backend build"
+
+[deploy]
+startCommand = "node apps/backend/dist/index.js"
+healthcheckPath = "/health"
+healthcheckTimeout = 30
+
+[deploy.watchPaths]
+include = ["apps/backend/**", "packages/shared/**"]
