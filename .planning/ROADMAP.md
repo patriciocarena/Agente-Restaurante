@@ -36,7 +36,13 @@ SaaS multi-tenant que automatiza el teléfono del restaurante: cuando un cliente
   3. El JWT incluye custom claim `restaurant_id` y el frontend usa Supabase anon key sin filtros manuales
   4. Service role key del backend no está expuesta al frontend (bundler-confirmed)
   5. Backend (Railway) y frontend (Vercel) están desplegados, conectan a Supabase, y los teléfonos de cliente quedan cifrados en reposo (no en logs)
-**Plans**: TBD
+**Plans:** 1/5 plans executed
+Plans:
+- [x] 01-01-PLAN.md — Monorepo skeleton + shared types + Wave 0 test scaffolds + SEC-04 grep script
+- [ ] 01-02-PLAN.md — Supabase schema migration (10 tables + RLS + Custom Access Token Hook) + manual Dashboard apply [BLOCKING]
+- [ ] 01-03-PLAN.md — Backend Express service + Supabase admin client + Mercado Pago singleton + PII-redacting logger + railway.toml
+- [ ] 01-04-PLAN.md — Frontend React+Vite+Tailwind+shadcn pages (Login/Signup/ForgotPassword/AuthCallback/Dashboard) with dark theme + Spanish rioplatense copy
+- [ ] 01-05-PLAN.md — Live RLS test + Vercel SPA config + GitHub Actions CI + Railway/Vercel deploy + end-to-end auth flow checkpoint [BLOCKING]
 **Research flag**: yes — Twilio AR availability under ENACOM (decides Phase 2 onboarding flow: direct AR purchase vs forwarding-from-cell). AR-language competitor scan.
 
 ### Phase 2: Onboarding & Menu
@@ -123,7 +129,7 @@ Phases 1 → 2 → 3 → 4 (MVP demo gate) → 5 → 6 → [TRIGGER] → 7
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundations | 0/TBD | Not started | - |
+| 1. Foundations | 1/5 | In Progress|  |
 | 2. Onboarding & Menu | 0/TBD | Not started | - |
 | 3. Voice MVP (Tier 1) | 0/TBD | Not started | - |
 | 4. Kitchen Display (KDS) | 0/TBD | Not started | - |
