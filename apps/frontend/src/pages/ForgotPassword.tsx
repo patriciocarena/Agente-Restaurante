@@ -11,14 +11,20 @@ export default function ForgotPassword() {
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
   const [sent, setSent] = useState(false);
+  const [error, setError] = useState('');
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    setError('');
     setLoading(true);
-    await supabase.auth.resetPasswordForEmail(email, {
+    const { error: resetError } = await supabase.auth.resetPasswordForEmail(email, {
       redirectTo: `${window.location.origin}/auth/callback?type=recovery`,
     });
     setLoading(false);
+    if (resetError) {
+      setError('No se pudo enviar el email. Intentá de nuevo.');
+      return;
+    }
     setSent(true);
   }
 
@@ -42,6 +48,9 @@ export default function ForgotPassword() {
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+                {error && (
+                  <p className="text-sm text-destructive">{error}</p>
+                )}
                 <div className="flex flex-col gap-1.5">
                   <Label htmlFor="email">Email</Label>
                   <Input

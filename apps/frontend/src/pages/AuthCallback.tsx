@@ -10,12 +10,14 @@ export default function AuthCallback() {
     let cancelled = false;
 
     async function handleCallback() {
+      const url = new URL(window.location.href);
+      const code = url.searchParams.get('code');
+      // type=recovery viene en links de "Olvidé mi contraseña"
+      const type = url.searchParams.get('type');
+
       // Path 1 — PKCE flow (default en supabase-js v2):
       // Supabase redirige a /auth/callback?code=xxx. exchangeCodeForSession
       // espera SOLO el code (no la URL completa).
-      const url = new URL(window.location.href);
-      const code = url.searchParams.get('code');
-
       if (code) {
         const { error: exchangeError } = await supabase.auth.exchangeCodeForSession(code);
         if (cancelled) return;
@@ -23,7 +25,8 @@ export default function AuthCallback() {
           setError('Algo salió mal. Intentá de nuevo o contactanos si el problema persiste.');
           return;
         }
-        navigate('/dashboard', { replace: true });
+        // Links de recuperación de contraseña van a /reset-password, no al dashboard.
+        navigate(type === 'recovery' ? '/reset-password' : '/dashboard', { replace: true });
         return;
       }
 
