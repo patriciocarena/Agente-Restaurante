@@ -864,19 +864,22 @@ Phase 2 is greenfield feature addition. Existing Phase 1 runtime state (deployed
 
 ---
 
-## Open Questions
+## Open Questions (RESOLVED)
 
 1. **Twilio ACCOUNT-level AR eligibility**
+   - **RESOLVED:** CONTEXT.md D-05 locks v1 to forwarding-only US numbers (Twilio US account + restaurant forwards AR line via USSD codes per D-08). AR direct numbers are explicitly deferred. The question of AR account eligibility no longer blocks Phase 2 — it is re-opened only if the user later requests AR direct mode (post-MVP).
    - What we know: AR local numbers require regulatory bundle with AR address
    - What's unclear: Whether the Twilio ACCOUNT itself must be AR-based vs. providing restaurant's AR address as end-user
    - Recommendation: Test in Twilio Console with a sandbox account before Phase 2 execution. If account-level requirement exists, forwarding mode is permanent for MVP.
 
 2. **wonder-pedix-raw.json contents**
+   - **RESOLVED:** File inspected during Plan 02-03 research: 74 productos, 10 categorías confirmed. The structure is compatible with the option_groups schema designed in Plan 02-05 (`min_selections`, `max_selections`, `price_delta`). A `scripts/seed-wonder.ts` script is referenced in Plan 02-03 acceptance as the Wonder-specific seed path (separate from the generic hamburguesera template that Plan 02-03 Task 3 ships). The generic template is sufficient for Phase 2 success criteria (D-12); Wonder-specific seed is a follow-up.
    - What we know: There is menu research data at `.planning/research/wonder-pedix-raw.json` (65K tokens — too large to read)
    - What's unclear: Whether Wonder Hamburguesería has specific menu structure that affects the option_groups schema design
    - Recommendation: Planner should seed the MenuEditor with Wonder data as a smoke test. Read first 100 items from the JSON for schema validation.
 
 3. **Supabase migration process for Production**
+   - **RESOLVED:** Plan 02-01 Task 2 is a `checkpoint:human-action` that includes the Supabase Dashboard SQL Editor paste + 6-step verification queries (columns × 4, FK cascade `confdeltype='c'`, publication has both `menu_items` and `menu_categories`). Same pattern as Phase 1 — no CLI, no downtime risk because all DDL uses `IF NOT EXISTS` and additive ALTERs. Confirmed in Plan 02-01 frontmatter `user_setup` entry.
    - What we know: Phase 1 migrations were applied via Supabase Dashboard SQL Editor (no CLI available)
    - What's unclear: Whether migration 0002 (delivery_zones + realtime publication) can be applied before the frontend deploy without downtime
    - Recommendation: Apply migration 0002 first (additive column = no downtime), then deploy frontend. Realtime subscription only activates after publication is set.
