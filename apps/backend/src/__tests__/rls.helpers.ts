@@ -39,7 +39,27 @@ export async function createTestTenant(prefix: string): Promise<TestTenant> {
 
 export async function destroyTestTenant(t: TestTenant) {
   const admin = createClient(SUPABASE_URL, SERVICE_KEY, { auth: { persistSession: false } });
-  // Cascade order: child tables first, then restaurants, then auth.user.
+  // Cascade order: deepest children first (option_items → option_groups → menu_items → categories), then others
+  const { data: menuItems } = await admin
+    .from('menu_items')
+    .select('id')
+    .eq('restaurant_id', t.restaurantId);
+
+  if (menuItems && menuItems.length > 0) {
+    const itemIds = menuItems.map(item => item.id);
+    // Delete option_items → option_groups for these items
+    const { data: groups } = await admin
+      .from('option_groups')
+      .select('id')
+      .in('menu_item_id', itemIds);
+
+    if (groups && groups.length > 0) {
+      const groupIds = groups.map(g => g.id);
+      await admin.from('option_items').delete().in('option_group_id', groupIds);
+    }
+    await admin.from('option_groups').delete().in('menu_item_id', itemIds);
+  }
+
   await admin.from('menu_items').delete().eq('restaurant_id', t.restaurantId);
   await admin.from('orders').delete().eq('restaurant_id', t.restaurantId);
   await admin.from('restaurant_counters').delete().eq('restaurant_id', t.restaurantId);
@@ -48,4 +68,17 @@ export async function destroyTestTenant(t: TestTenant) {
   await admin.from('menu_categories').delete().eq('restaurant_id', t.restaurantId);
   await admin.from('restaurants').delete().eq('id', t.restaurantId);
   await admin.auth.admin.deleteUser(t.userId);
+}
+
+export async function seedHours(tenant: TestTenant): Promise<void> {
+  const admin = createClient(SUPABASE_URL, SERVICE_KEY, { auth: { persistSession: false } });
+  const rows = [0, 1, 2, 3, 4, 5, 6].map((d) => ({
+    restaurant_id: tenant.restaurantId,
+    day_of_week: d,
+    open_time: '11:00',
+    close_time: '23:00',
+    is_closed: false,
+  }));
+  const { error } = await admin.from('restaurant_hours').insert(rows);
+  if (error) throw error;
 }
