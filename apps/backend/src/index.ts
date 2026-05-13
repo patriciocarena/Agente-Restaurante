@@ -1,5 +1,8 @@
 import express from 'express';
 import { healthRouter } from './routes/health';
+import { restaurantsRouter } from './routes/restaurants';
+import { onboardingRouter } from './routes/onboarding';
+import { phoneRouter } from './routes/phone';
 import { logger } from './lib/logger';
 
 const app = express();
@@ -23,6 +26,9 @@ for (const key of REQUIRED_ENV) {
 
 app.use(express.json());
 app.use('/health', healthRouter);
+app.use('/api/restaurants', restaurantsRouter);
+app.use('/api/onboarding', onboardingRouter);
+app.use('/api/phone', phoneRouter);
 
 // Only listen if not under test runner.
 // Bind explicitly to 0.0.0.0 so Railway healthcheck (and any reverse proxy)
