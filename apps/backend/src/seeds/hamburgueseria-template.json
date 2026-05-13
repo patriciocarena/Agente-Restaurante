@@ -1,0 +1,84 @@
+{
+  "version": 1,
+  "categories": [
+    {
+      "name": "Hamburguesas",
+      "sort_order": 0,
+      "items": [
+        {
+          "name": "Hamburguesa clásica",
+          "description": "Carne, lechuga, tomate, cebolla.",
+          "base_price": null
+        },
+        {
+          "name": "Hamburguesa doble queso",
+          "description": "Doble carne, doble queso cheddar.",
+          "base_price": null
+        },
+        {
+          "name": "Hamburguesa veggie",
+          "description": "Medallón de garbanzos o mixta.",
+          "base_price": null
+        }
+      ]
+    },
+    {
+      "name": "Acompañamientos",
+      "sort_order": 1,
+      "items": [
+        {
+          "name": "Papas fritas",
+          "description": "Papas clásicas.",
+          "base_price": null
+        },
+        {
+          "name": "Papas con cheddar",
+          "description": "Papas con cheddar y panceta.",
+          "base_price": null
+        },
+        {
+          "name": "Aros de cebolla",
+          "description": "Aros de cebolla rebozados.",
+          "base_price": null
+        }
+      ]
+    },
+    {
+      "name": "Bebidas",
+      "sort_order": 2,
+      "items": [
+        {
+          "name": "Coca-Cola 500ml",
+          "description": "Gaseosa.",
+          "base_price": null
+        },
+        {
+          "name": "Agua mineral 500ml",
+          "description": "Sin gas o con gas.",
+          "base_price": null
+        },
+        {
+          "name": "Cerveza artesanal",
+          "description": "IPA o rubia.",
+          "base_price": null
+        }
+      ]
+    },
+    {
+      "name": "Postres",
+      "sort_order": 3,
+      "items": [
+        {
+          "name": "Brownie",
+          "description": "Brownie con dulce de leche.",
+          "base_price": null
+        },
+        {
+          "name": "Helado",
+          "description": "Bocha de helado, sabor a elección.",
+          "base_price": null
+        }
+      ]
+    }
+  ]
+}
