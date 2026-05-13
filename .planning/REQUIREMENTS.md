@@ -20,7 +20,7 @@ Requirements for initial release. Each maps to roadmap phases. Pilot: Wonder Ham
 ### Onboarding
 
 - [ ] **ONB-01**: Wizard de onboarding guía al dueño post-signup: datos del restaurante (nombre, slug, dirección)
-- [ ] **ONB-02**: El dueño configura el horario de atención por día de la semana (jsonb `restaurant_hours`)
+- [x] **ONB-02**: El dueño configura el horario de atención por día de la semana (jsonb `restaurant_hours`)
 - [ ] **ONB-03**: El dueño configura zonas de delivery que cubre (texto libre, ej: "Villa Allende centro, Argüello, Saldán")
 - [ ] **ONB-04**: El sistema asigna automáticamente un número Twilio AR al restaurante en alta (o muestra instrucciones de forwarding si Twilio AR no es viable según research de Phase 1)
 - [ ] **ONB-05**: El sistema crea automáticamente el Vapi assistant con el system prompt construido desde el menú
@@ -28,10 +28,10 @@ Requirements for initial release. Each maps to roadmap phases. Pilot: Wonder Ham
 
 ### Menu Management
 
-- [ ] **MENU-01**: El dueño puede crear, editar y eliminar categorías del menú (ej: Hamburguesas, Acompañamientos, Bebidas)
+- [x] **MENU-01**: El dueño puede crear, editar y eliminar categorías del menú (ej: Hamburguesas, Acompañamientos, Bebidas)
 - [ ] **MENU-02**: El dueño puede agregar items con: nombre, descripción, precio, categoría
 - [ ] **MENU-03**: El dueño puede definir modificadores por item con `{name, price_delta}` (ej: "sin cebolla" $0, "extra queso" +$500)
-- [ ] **MENU-04**: El dueño puede marcar items como disponibles/no disponibles con un toggle (mid-shift sold-out)
+- [x] **MENU-04**: El dueño puede marcar items como disponibles/no disponibles con un toggle (mid-shift sold-out)
 - [ ] **MENU-05**: Al editar el menú, el Vapi assistant se actualiza con el system prompt nuevo en <60 segundos
 
 ### Voice Agent
@@ -175,15 +175,15 @@ Mapeo de requirement → fase del roadmap. Llenar después de roadmap creation.
 | AUTH-06 | Phase 1 | Pending |
 | AUTH-07 | Phase 1 | Pending |
 | ONB-01 | Phase 2 | Pending |
-| ONB-02 | Phase 2 | Pending |
+| ONB-02 | Phase 2 | Complete |
 | ONB-03 | Phase 2 | Pending |
 | ONB-04 | Phase 2 | Pending |
 | ONB-05 | Phase 3 | Pending |
 | ONB-06 | Phase 2 | Pending |
-| MENU-01 | Phase 2 | Pending |
+| MENU-01 | Phase 2 | Complete |
 | MENU-02 | Phase 2 | Pending |
 | MENU-03 | Phase 2 | Pending |
-| MENU-04 | Phase 2 | Pending |
+| MENU-04 | Phase 2 | Complete |
 | MENU-05 | Phase 3 | Pending |
 | VOICE-01 | Phase 3 | Pending |
 | VOICE-02 | Phase 3 | Pending |

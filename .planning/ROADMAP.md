@@ -130,7 +130,7 @@ Phases 1 → 2 → 3 → 4 (MVP demo gate) → 5 → 6 → [TRIGGER] → 7
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundations | 1/5 | In Progress|  |
-| 2. Onboarding & Menu | 0/TBD | Not started | - |
+| 2. Onboarding & Menu | 1/6 | In Progress|  |
 | 3. Voice MVP (Tier 1) | 0/TBD | Not started | - |
 | 4. Kitchen Display (KDS) | 0/TBD | Not started | - |
 | 5. Billing real (MP) | 0/TBD | Not started | - |
