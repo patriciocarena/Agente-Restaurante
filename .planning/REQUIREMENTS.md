@@ -19,12 +19,12 @@ Requirements for initial release. Each maps to roadmap phases. Pilot: Wonder Ham
 
 ### Onboarding
 
-- [ ] **ONB-01**: Wizard de onboarding guía al dueño post-signup: datos del restaurante (nombre, slug, dirección)
+- [x] **ONB-01**: Wizard de onboarding guía al dueño post-signup: datos del restaurante (nombre, slug, dirección)
 - [x] **ONB-02**: El dueño configura el horario de atención por día de la semana (jsonb `restaurant_hours`)
-- [ ] **ONB-03**: El dueño configura zonas de delivery que cubre (texto libre, ej: "Villa Allende centro, Argüello, Saldán")
-- [ ] **ONB-04**: El sistema asigna automáticamente un número Twilio AR al restaurante en alta (o muestra instrucciones de forwarding si Twilio AR no es viable según research de Phase 1)
+- [x] **ONB-03**: El dueño configura zonas de delivery que cubre (texto libre, ej: "Villa Allende centro, Argüello, Saldán")
+- [x] **ONB-04**: El sistema asigna automáticamente un número Twilio AR al restaurante en alta (o muestra instrucciones de forwarding si Twilio AR no es viable según research de Phase 1)
 - [ ] **ONB-05**: El sistema crea automáticamente el Vapi assistant con el system prompt construido desde el menú
-- [ ] **ONB-06**: El dueño elige el nombre de la agente (default "Sofía", configurable)
+- [x] **ONB-06**: El dueño elige el nombre de la agente (default "Sofía", configurable)
 
 ### Menu Management
 
@@ -174,12 +174,12 @@ Mapeo de requirement → fase del roadmap. Llenar después de roadmap creation.
 | AUTH-05 | Phase 1 | Pending |
 | AUTH-06 | Phase 1 | Pending |
 | AUTH-07 | Phase 1 | Pending |
-| ONB-01 | Phase 2 | Pending |
+| ONB-01 | Phase 2 | Complete |
 | ONB-02 | Phase 2 | Complete |
-| ONB-03 | Phase 2 | Pending |
-| ONB-04 | Phase 2 | Pending |
+| ONB-03 | Phase 2 | Complete |
+| ONB-04 | Phase 2 | Complete |
 | ONB-05 | Phase 3 | Pending |
-| ONB-06 | Phase 2 | Pending |
+| ONB-06 | Phase 2 | Complete |
 | MENU-01 | Phase 2 | Complete |
 | MENU-02 | Phase 2 | Pending |
 | MENU-03 | Phase 2 | Pending |
