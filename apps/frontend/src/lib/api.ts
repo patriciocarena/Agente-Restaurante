@@ -35,4 +35,22 @@ export const api = {
   getMe: () => call<{ restaurant: any; hours: any[]; delivery_zones: string|null }>('/api/restaurants/me'),
   patchMe: (body: Partial<{ name: string; address: string; agent_name: string; delivery_zones: string; onboarding_step: number }>) => call<{ restaurant: any }>('/api/restaurants/me', { method: 'PATCH', body: JSON.stringify(body) }),
   putHours: (body: { hours: Array<{ day_of_week: number; open_time: string|null; close_time: string|null; is_closed: boolean }> }) => call<{ ok: true }>('/api/restaurants/me/hours', { method: 'PUT', body: JSON.stringify(body) }),
+
+  // Menu Categories (MENU-01)
+  listCategories: () => call<{ categories: Array<{ id:string; name:string; sort_order:number }> }>('/api/menu-categories'),
+  createCategory: (body: { name: string }) => call<{ category: { id:string; name:string; sort_order:number } }>('/api/menu-categories', { method: 'POST', body: JSON.stringify(body) }),
+  renameCategory: (id: string, body: { name?: string; sort_order?: number }) => call<{ category: any }>(`/api/menu-categories/${id}`, { method: 'PATCH', body: JSON.stringify(body) }),
+  deleteCategory: (id: string) => call<void>(`/api/menu-categories/${id}`, { method: 'DELETE' }),
+
+  // Menu Items (MENU-02, MENU-03)
+  listItems: (categoryId: string) => call<{ items: any[] }>(`/api/menu-items?category_id=${encodeURIComponent(categoryId)}`),
+  createItem: (body: any) => call<{ item: any }>('/api/menu-items', { method: 'POST', body: JSON.stringify(body) }),
+  updateItem: (id: string, body: any) => call<{ item: any }>(`/api/menu-items/${id}`, { method: 'PATCH', body: JSON.stringify(body) }),
+  deleteItem: (id: string) => call<void>(`/api/menu-items/${id}`, { method: 'DELETE' }),
+
+  // Availability hot path (MENU-04)
+  toggleAvailability: (id: string, available: boolean) => call<{ item: any }>(`/api/menu-items/${id}/availability`, { method: 'PATCH', body: JSON.stringify({ available }) }),
+
+  // Template (D-12)
+  loadTemplate: () => call<{ categories_created: number; items_created: number }>('/api/menu/load-template', { method: 'POST' }),
 };
