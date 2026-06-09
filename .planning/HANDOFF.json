@@ -1,0 +1,36 @@
+{
+  "version": "1.0",
+  "timestamp": "2026-06-09T20:34:53.597Z",
+  "phase": "02",
+  "phase_name": "onboarding-menu",
+  "phase_dir": ".planning/phases/02-onboarding-menu",
+  "plan": 6,
+  "task": 2,
+  "total_tasks": 2,
+  "status": "paused",
+  "completed_tasks": [
+    {"id": 1, "name": "Wire /menu y /settings routes + onboarding guard + Dashboard Twilio number + CTAs", "status": "done", "commit": "895b5dd"}
+  ],
+  "remaining_tasks": [
+    {"id": 2, "name": "UAT manual del wizard completo + menú + realtime (17 pasos)", "status": "in_progress", "progress": "Paso 1 del wizard pasó una vez (restaurante 'wonder' creado); al reintentar tras un mes, slug_taken bloquea. Pasos 2-4, menú y realtime sin probar."}
+  ],
+  "blockers": [
+    {
+      "description": "Wizard Paso 1 tira slug_taken (409): el restaurante 'wonder' ya existe pero onboarding_step=0, y el flujo de resume no detecta restaurante existente — el frontend re-intenta POST /api/restaurants en vez de saltar al paso correcto.",
+      "type": "technical",
+      "workaround": "Fix probable: usar GET /api/onboarding/resume (has_restaurant: true) para posicionar el wizard, y/o que el Paso 1 haga PATCH si el restaurante ya es del usuario. Alternativa rápida para testing: borrar la fila de restaurants en Supabase."
+    }
+  ],
+  "human_actions_pending": [
+    {"action": "Crear cuenta en vapi.ai y obtener VAPI_API_KEY", "context": "Prerequisito bloqueante de Phase 3 (Voice MVP). Twilio diferido — se usa el número US gratis de Vapi.", "blocking": true}
+  ],
+  "decisions": [
+    {"decision": "Pausar Phase 2 con UAT incompleta y priorizar Phase 3 (agente de voz)", "rationale": "El agente de voz es el core value del producto; la UI de onboarding puede terminarse después.", "phase": "02"},
+    {"decision": "Backend local en puerto 8787", "rationale": "3000 y 3001 están ocupados por apps Next.js del usuario; 8787 libre.", "phase": "02"},
+    {"decision": "Auth middleware lee restaurant_id desde claims del JWT (no de auth.users.app_metadata)", "rationale": "El Custom Access Token Hook inyecta el claim al firmar el token, no persiste en DB. Commit cd41915.", "phase": "02"},
+    {"decision": "Twilio diferido en Phase 3", "rationale": "Usuario sin cuenta Twilio; Vapi provee número US gratis para probar el MVP.", "phase": "03"}
+  ],
+  "uncommitted_files": [],
+  "next_action": "Phase 3 kickoff: usuario crea cuenta Vapi → VAPI_API_KEY en apps/backend/.env → /gsd-discuss-phase 03 → /gsd-plan-phase 03 → /gsd-execute-phase 03. Al retomar Phase 2: fix slug_taken + quitar mensajes de diagnóstico + completar UAT.",
+  "context_notes": "Sesión de retorno tras 1 mes. Supabase estaba pausada (free tier) y fue restaurada — datos intactos (1 restaurante 'wonder', 7 filas hours, 1 user 5f5fe6b8-1194-4a30-84b8-11d1c9520e88, onboarding_step=0). Mensajes de diagnóstico TEMPORALES siguen activos en apps/backend/src/routes/restaurants.ts (details en 400) y apps/frontend/src/hooks/useRestaurantSetup.ts (error verboso + console.error) — quitar antes de cerrar Phase 2. Migración 0002 aplicada vía Management API. MCP de Supabase configurado (scope user, project hzgunbftloevclkohcdf). La agente de Phase 3 necesita menú: sembrar con hamburgueseria-template.json vía menu-template router (sin UI)."
+}

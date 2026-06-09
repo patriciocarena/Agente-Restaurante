@@ -2,10 +2,10 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: executing
-stopped_at: Completed 02-04-PLAN.md
-last_updated: "2026-05-13T18:34:53.216Z"
-last_activity: 2026-05-13
+status: paused
+stopped_at: Phase 02 paused at 02-06 Task 2 (UAT incomplete) — pivoting to Phase 03 Voice MVP
+last_updated: "2026-06-09T20:34:53.597Z"
+last_activity: 2026-06-09
 progress:
   total_phases: 7
   completed_phases: 1
@@ -21,18 +21,18 @@ progress:
 See: .planning/PROJECT.md (updated 2026-05-06)
 
 **Core value:** Cuando suena el teléfono del restaurante, el pedido llega a la cocina sin que nadie atienda.
-**Current focus:** Phase 02 — onboarding-menu
+**Current focus:** Phase 03 — voice-mvp (Phase 02 PAUSED, UAT pendiente)
 
 ## Current Position
 
-Phase: 02 (onboarding-menu) — EXECUTING
-Plan: 5 of 6
-Status: Ready to execute
-Last activity: 2026-05-13
+Phase: 02 (onboarding-menu) — PAUSED at 02-06 Task 2 (UAT checkpoint, incomplete)
+Next: Phase 03 (voice-mvp) — kickoff: discuss → plan → execute
+Handoff: .planning/HANDOFF.json + .planning/phases/02-onboarding-menu/.continue-here.md
+Last activity: 2026-06-09
 
 Progress Phase 1: [██████████] 100%
-Progress Phase 2: [███░░░░░░░] 50% (3 of 6 plans)
-Progress Project: [██▒▒▒▒▒▒▒▒] 29% (3 de 11 plans)
+Progress Phase 2: [█████████░] 6/6 plans implemented, UAT pending
+Progress Project: [████▒▒▒▒▒▒] ~45% (9 de 11+ plans)
 
 ## Phase 1 — Deliverables verificados
 
@@ -57,7 +57,7 @@ Progress Project: [██▒▒▒▒▒▒▒▒] 29% (3 de 11 plans)
 | Phase | Plans | Tasks | Status |
 |-------|-------|-------|--------|
 | 01 foundations | 5/5 | 100% | ✅ complete |
-| 02 onboarding-menu | 3/6 | In Progress | 02-01: ✅ complete (23 files), 02-02: ✅ complete (7 files), 02-03: ✅ complete (3 routers + seed) |
+| 02 onboarding-menu | 6/6 impl | UAT pending | PAUSED — blocker slug_taken + diagnósticos temporales; ver .continue-here.md |
 | Phase 02-onboarding-menu P04 | 87min | 3 tasks | 13 files |
 
 ## Accumulated Context
@@ -80,7 +80,10 @@ Recent decisions affecting current work:
 
 ### Pending Todos
 
-None — Phase 1 cerrada.
+- [Phase 02] Fix slug_taken en wizard Paso 1 (resume no detecta restaurante existente) — al retomar Phase 02.
+- [Phase 02] Quitar mensajes de diagnóstico temporales (restaurants.ts + useRestaurantSetup.ts) antes de cerrar fase.
+- [Phase 03] Usuario crea cuenta Vapi + API key (bloqueante kickoff).
+- [Phase 03] Sembrar menú de "wonder" con hamburgueseria-template.json (la agente necesita menú para leer).
 
 ### Blockers/Concerns
 
@@ -99,6 +102,6 @@ None — Phase 1 cerrada.
 
 ## Session Continuity
 
-Last session: 2026-05-13T18:34:53.214Z
-Stopped at: Completed 02-04-PLAN.md
-Resume file: None
+Last session: 2026-06-09T20:34:53.597Z
+Stopped at: Phase 02 paused (UAT incomplete) — pivot to Phase 03 Voice MVP
+Resume file: .planning/phases/02-onboarding-menu/.continue-here.md (Phase 02) | HANDOFF.json
