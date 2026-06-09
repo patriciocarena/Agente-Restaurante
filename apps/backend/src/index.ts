@@ -1,8 +1,12 @@
 import express from 'express';
+import cors from 'cors';
 import { healthRouter } from './routes/health';
 import { restaurantsRouter } from './routes/restaurants';
 import { onboardingRouter } from './routes/onboarding';
 import { phoneRouter } from './routes/phone';
+import { menuCategoriesRouter } from './routes/menu-categories';
+import { menuItemsRouter } from './routes/menu-items';
+import { menuTemplateRouter } from './routes/menu-template';
 import { logger } from './lib/logger';
 
 const app = express();
@@ -24,11 +28,21 @@ for (const key of REQUIRED_ENV) {
   }
 }
 
+const ALLOWED_ORIGINS = [
+  'http://localhost:5173',
+  'http://localhost:4173',
+  process.env.FRONTEND_URL,
+].filter(Boolean) as string[];
+
+app.use(cors({ origin: ALLOWED_ORIGINS, credentials: true }));
 app.use(express.json());
 app.use('/health', healthRouter);
 app.use('/api/restaurants', restaurantsRouter);
 app.use('/api/onboarding', onboardingRouter);
 app.use('/api/phone', phoneRouter);
+app.use('/api/menu-categories', menuCategoriesRouter);
+app.use('/api/menu-items', menuItemsRouter);
+app.use('/api/menu', menuTemplateRouter);
 
 // Only listen if not under test runner.
 // Bind explicitly to 0.0.0.0 so Railway healthcheck (and any reverse proxy)

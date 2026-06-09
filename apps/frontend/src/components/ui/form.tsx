@@ -27,10 +27,21 @@ const FormFieldContext = React.createContext<FormFieldContextValue>(
 
 const FormField = React.forwardRef<
   HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement> & FormFieldContextValue
+  React.HTMLAttributes<HTMLDivElement> &
+    ControllerProps &
+    FormFieldContextValue
 >(({ name, ...props }, ref) => (
   <FormFieldContext.Provider value={{ name }}>
-    <div ref={ref} {...props} />
+    <Controller
+      name={name}
+      render={({ field }) => (
+        <div ref={ref} {...props}>
+          {typeof props.children === 'function'
+            ? (props.children as any)({ field })
+            : props.children}
+        </div>
+      )}
+    />
   </FormFieldContext.Provider>
 ))
 FormField.displayName = "FormField"
@@ -102,7 +113,7 @@ const FormLabel = React.forwardRef<
 FormLabel.displayName = "FormLabel"
 
 const FormControl = React.forwardRef<
-  Slot,
+  React.ElementRef<typeof Slot>,
   React.ComponentPropsWithoutRef<typeof Slot>
 >(({ ...props }, ref) => {
   const { error, formItemId, formDescriptionId, formMessageId } = useFormField()

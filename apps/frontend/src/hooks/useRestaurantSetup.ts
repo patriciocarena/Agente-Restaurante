@@ -14,8 +14,14 @@ export function useRestaurantSetup() {
     setLoading(true); setError(null);
     try { return await fn(); }
     catch (e) {
-      const code = e instanceof ApiError ? e.code : 'network_error';
-      setError(code);
+      if (e instanceof ApiError) {
+        const detail = e.details ? ` — ${JSON.stringify(e.details)}` : '';
+        setError(`${e.code} (${e.status})${detail}`);
+      } else {
+        setError(`network_error — ${String(e)}`);
+      }
+      // eslint-disable-next-line no-console
+      console.error('[DIAG] useRestaurantSetup error:', e);
       throw e;
     }
     finally { setLoading(false); }

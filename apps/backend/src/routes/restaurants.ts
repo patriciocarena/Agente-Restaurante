@@ -50,10 +50,12 @@ restaurantsRouter.post('/', async (req: Request, res: Response) => {
     if (rErr) {
       // UNIQUE violation on slug: 23505
       if (rErr.code === '23505') {
-        return res.status(409).json({ error: 'slug_taken' });
+        return res.status(409).json({ error: 'slug_taken', details: { message: rErr.message, code: rErr.code, hint: (rErr as any).hint, constraint: (rErr as any).details } });
       }
-      logger.error('restaurant insert failed', { error: rErr.message });
-      return res.status(400).json({ error: 'restaurant_creation_failed' });
+      // eslint-disable-next-line no-console
+      console.error('[DIAG] restaurant insert failed:', JSON.stringify(rErr, null, 2));
+      logger.error('restaurant insert failed', { error: rErr.message, code: rErr.code });
+      return res.status(400).json({ error: 'restaurant_creation_failed', details: { message: rErr.message, code: rErr.code, hint: (rErr as any).hint, dbDetails: (rErr as any).details } });
     }
 
     // Crear restaurant_hours (7 filas, uno por día)

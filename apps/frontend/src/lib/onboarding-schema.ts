@@ -15,7 +15,7 @@ export const onboardingSchema = z.object({
   address: z.string()
     .min(5, 'Poné la dirección completa.'),
   delivery_zones: z.string().optional(),
-  agent_name: z.string().min(1, 'Este campo es obligatorio.').default('Sofía'),
+  agent_name: z.string().min(1, 'Este campo es obligatorio.'),
   hours: z.array(z.object({
     day_of_week: z.number().int().min(0).max(6),
     open_time: z.string().nullable(),

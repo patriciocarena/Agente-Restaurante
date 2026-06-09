@@ -6,3 +6,9 @@ dist/
 .DS_Store
 apps/frontend/dist/
 apps/backend/dist/
+
+# Claude Code local config + worktrees
+.claude/
+
+# Personal files (not project-related)
+Shoes/

@@ -27,6 +27,7 @@
     "react-dom": "^19.2.6",
     "react-hook-form": "^7.75.0",
     "react-router-dom": "^7.15.0",
+    "slugify": "^1.6.6",
     "tailwind-merge": "^3.5.0",
     "zod": "^4.4.3"
   },
