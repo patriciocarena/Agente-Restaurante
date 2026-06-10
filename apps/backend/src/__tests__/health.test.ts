@@ -5,6 +5,8 @@ import request from 'supertest';
 process.env.SUPABASE_URL ??= 'http://localhost:54321';
 process.env.SUPABASE_SERVICE_ROLE_KEY ??= 'fake_for_test';
 process.env.MERCADO_PAGO_ACCESS_TOKEN ??= 'fake_for_test';
+process.env.VAPI_API_KEY ??= 'fake_for_test';
+process.env.VAPI_WEBHOOK_SECRET ??= 'fake_for_test';
 process.env.NODE_ENV = 'test';
 
 let app: any;

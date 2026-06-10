@@ -7,6 +7,7 @@ import { phoneRouter } from './routes/phone';
 import { menuCategoriesRouter } from './routes/menu-categories';
 import { menuItemsRouter } from './routes/menu-items';
 import { menuTemplateRouter } from './routes/menu-template';
+import { vapiWebhookRouter } from './routes/vapi-webhook';
 import { logger } from './lib/logger';
 
 const app = express();
@@ -17,6 +18,8 @@ const PORT = Number(process.env.PORT ?? 3000);
 const REQUIRED_ENV = [
   'SUPABASE_URL',
   'SUPABASE_SERVICE_ROLE_KEY',
+  'VAPI_API_KEY',
+  'VAPI_WEBHOOK_SECRET',
 ] as const;
 
 for (const key of REQUIRED_ENV) {
@@ -43,6 +46,7 @@ app.use('/api/phone', phoneRouter);
 app.use('/api/menu-categories', menuCategoriesRouter);
 app.use('/api/menu-items', menuItemsRouter);
 app.use('/api/menu', menuTemplateRouter);
+app.use('/api/vapi', vapiWebhookRouter);
 
 // Only listen if not under test runner.
 // Bind explicitly to 0.0.0.0 so Railway healthcheck (and any reverse proxy)

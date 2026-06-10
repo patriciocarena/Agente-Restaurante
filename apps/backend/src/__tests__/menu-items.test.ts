@@ -8,6 +8,8 @@ process.env.TWILIO_ACCOUNT_SID ??= 'fake_for_test';
 process.env.TWILIO_AUTH_TOKEN ??= 'fake_for_test';
 process.env.TWILIO_DEFAULT_AREA_CODE ??= '415';
 process.env.MERCADO_PAGO_ACCESS_TOKEN ??= 'fake_for_test';
+process.env.VAPI_API_KEY ??= 'fake_for_test';
+process.env.VAPI_WEBHOOK_SECRET ??= 'fake_for_test';
 process.env.NODE_ENV = 'test';
 
 let app: any;
