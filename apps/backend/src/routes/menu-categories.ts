@@ -6,6 +6,8 @@
 import { Router } from 'express';
 import { requireAuth, AuthedRequest } from '../middleware/auth';
 import { supabaseAdmin } from '../lib/supabase';
+import { syncAssistantPrompt } from '../lib/vapi';
+import { logger } from '../lib/logger';
 
 export const menuCategoriesRouter = Router();
 
@@ -67,6 +69,12 @@ menuCategoriesRouter.post('/', async (req: AuthedRequest, res: any) => {
     .single();
 
   if (insertErr) return res.status(400).json({ error: insertErr.message });
+  // MENU-05: resync the Vapi system prompt with the new menu. Fire-and-forget —
+  // the menu edit must succeed even if Vapi is down. syncAssistantPrompt swallows its own errors;
+  // the .catch is belt-and-suspenders. Do NOT await.
+  syncAssistantPrompt(req.restaurantId).catch((err) => {
+    logger.error('vapi sync failed after menu edit', { error: String(err), restaurant_id: req.restaurantId });
+  });
   return res.status(201).json({ category });
 });
 
@@ -99,6 +107,12 @@ menuCategoriesRouter.patch('/:id', async (req: AuthedRequest, res: any) => {
   if (error) return res.status(404).json({ error: 'category_not_found' });
   if (!category) return res.status(404).json({ error: 'category_not_found' });
 
+  // MENU-05: resync the Vapi system prompt with the new menu. Fire-and-forget —
+  // the menu edit must succeed even if Vapi is down. syncAssistantPrompt swallows its own errors;
+  // the .catch is belt-and-suspenders. Do NOT await.
+  syncAssistantPrompt(req.restaurantId).catch((err) => {
+    logger.error('vapi sync failed after menu edit', { error: String(err), restaurant_id: req.restaurantId });
+  });
   return res.json({ category });
 });
 
@@ -119,5 +133,11 @@ menuCategoriesRouter.delete('/:id', async (req: AuthedRequest, res: any) => {
     .eq('restaurant_id', req.restaurantId);
 
   if (error) return res.status(404).json({ error: 'category_not_found' });
+  // MENU-05: resync the Vapi system prompt with the new menu. Fire-and-forget —
+  // the menu edit must succeed even if Vapi is down. syncAssistantPrompt swallows its own errors;
+  // the .catch is belt-and-suspenders. Do NOT await.
+  syncAssistantPrompt(req.restaurantId).catch((err) => {
+    logger.error('vapi sync failed after menu edit', { error: String(err), restaurant_id: req.restaurantId });
+  });
   return res.status(204).send();
 });
