@@ -7,6 +7,8 @@
 import { Router } from 'express';
 import { requireAuth, AuthedRequest } from '../middleware/auth';
 import { supabaseAdmin } from '../lib/supabase';
+import { syncAssistantPrompt } from '../lib/vapi';
+import { logger } from '../lib/logger';
 
 export const menuItemsRouter = Router();
 
@@ -185,6 +187,12 @@ menuItemsRouter.post('/', async (req: AuthedRequest, res: any) => {
     }
   }
 
+  // MENU-05: resync the Vapi system prompt with the new menu. Fire-and-forget —
+  // the menu edit must succeed even if Vapi is down. syncAssistantPrompt swallows its own errors;
+  // the .catch is belt-and-suspenders. Do NOT await.
+  syncAssistantPrompt(req.restaurantId).catch((err) => {
+    logger.error('vapi sync failed after menu edit', { error: String(err), restaurant_id: req.restaurantId });
+  });
   return res.status(201).json({ item: finalItem });
 });
 
@@ -312,6 +320,12 @@ menuItemsRouter.patch('/:id', async (req: AuthedRequest, res: any) => {
     updatedItem.option_groups = groups || [];
   }
 
+  // MENU-05: resync the Vapi system prompt with the new menu. Fire-and-forget —
+  // the menu edit must succeed even if Vapi is down. syncAssistantPrompt swallows its own errors;
+  // the .catch is belt-and-suspenders. Do NOT await.
+  syncAssistantPrompt(req.restaurantId).catch((err) => {
+    logger.error('vapi sync failed after menu edit', { error: String(err), restaurant_id: req.restaurantId });
+  });
   return res.json({ item: updatedItem });
 });
 
@@ -331,6 +345,12 @@ menuItemsRouter.delete('/:id', async (req: AuthedRequest, res: any) => {
     .eq('restaurant_id', req.restaurantId);
 
   if (error) return res.status(404).json({ error: 'item_not_found' });
+  // MENU-05: resync the Vapi system prompt with the new menu. Fire-and-forget —
+  // the menu edit must succeed even if Vapi is down. syncAssistantPrompt swallows its own errors;
+  // the .catch is belt-and-suspenders. Do NOT await.
+  syncAssistantPrompt(req.restaurantId).catch((err) => {
+    logger.error('vapi sync failed after menu edit', { error: String(err), restaurant_id: req.restaurantId });
+  });
   return res.status(204).send();
 });
 
@@ -352,5 +372,11 @@ menuItemsRouter.patch('/:id/availability', async (req: AuthedRequest, res: any) 
     .single();
 
   if (error || !data) return res.status(404).json({ error: 'item_not_found' });
+  // MENU-05: resync the Vapi system prompt with the new menu. Fire-and-forget —
+  // the menu edit must succeed even if Vapi is down. syncAssistantPrompt swallows its own errors;
+  // the .catch is belt-and-suspenders. Do NOT await.
+  syncAssistantPrompt(req.restaurantId).catch((err) => {
+    logger.error('vapi sync failed after menu edit', { error: String(err), restaurant_id: req.restaurantId });
+  });
   return res.json(data);
 });

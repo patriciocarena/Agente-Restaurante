@@ -7,6 +7,7 @@ import { supabaseAdmin } from '../lib/supabase';
 import { provisionUsForwardingNumber } from '../lib/twilio';
 import { getForwardingDocsUrl, forwardingInstructions } from '../lib/forwarding-instructions';
 import { logger } from '../lib/logger';
+import { createVapiAssistant } from '../lib/vapi';
 
 export const onboardingRouter = Router();
 
@@ -51,7 +52,7 @@ onboardingRouter.post('/finish', async (req: Request, res: Response) => {
     // Buscar restaurante por owner_id
     const { data: restaurant, error: restaurantErr } = await supabaseAdmin
       .from('restaurants')
-      .select('id, onboarding_step, twilio_number')
+      .select('id, onboarding_step, twilio_number, name, agent_name, vapi_assistant_id')
       .eq('owner_id', authedReq.userId)
       .maybeSingle();
 
@@ -66,6 +67,26 @@ onboardingRouter.post('/finish', async (req: Request, res: Response) => {
 
     // Idempotencia: si ya está completado, devolver el número existente
     if (restaurant.onboarding_step >= 4 && restaurant.twilio_number) {
+      // If assistant wasn't created on the original finish (e.g. Vapi was down), retry now
+      if (!restaurant.vapi_assistant_id) {
+        try {
+          const assistantId = await createVapiAssistant({
+            id: restaurant.id,
+            name: restaurant.name,
+            agent_name: restaurant.agent_name ?? 'Sofía',
+          });
+          await supabaseAdmin
+            .from('restaurants')
+            .update({ vapi_assistant_id: assistantId })
+            .eq('id', restaurant.id)
+            .eq('owner_id', authedReq.userId);
+        } catch (vapiErr) {
+          logger.error('vapi assistant creation failed (idempotent retry)', {
+            restaurant_id: restaurant.id,
+            error: String(vapiErr),
+          });
+        }
+      }
       return res.json({
         twilio_number: restaurant.twilio_number,
         mode: 'us-forwarding',
@@ -101,6 +122,26 @@ onboardingRouter.post('/finish', async (req: Request, res: Response) => {
     if (updateErr) {
       logger.error('restaurant update failed', { error: updateErr.message });
       return res.status(400).json({ error: 'restaurant_update_failed' });
+    }
+
+    // Create Vapi assistant (ONB-05). Non-blocking: Twilio provision is the critical path;
+    // an assistant-creation failure must NOT roll back onboarding (avoid re-provisioning a number).
+    try {
+      const assistantId = await createVapiAssistant({
+        id: restaurant.id,
+        name: restaurant.name,
+        agent_name: restaurant.agent_name ?? 'Sofía',
+      });
+      await supabaseAdmin
+        .from('restaurants')
+        .update({ vapi_assistant_id: assistantId })
+        .eq('id', restaurant.id)
+        .eq('owner_id', authedReq.userId); // defense-in-depth
+    } catch (vapiErr) {
+      logger.error('vapi assistant creation failed', {
+        restaurant_id: restaurant.id,
+        error: String(vapiErr),
+      });
     }
 
     logger.info('onboarding finished', { restaurant_id: restaurant.id });
