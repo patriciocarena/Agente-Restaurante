@@ -13,6 +13,7 @@
     "@agente-restaurante/shared": "workspace:*",
     "@supabase/supabase-js": "^2.105.3",
     "@types/cors": "^2.8.19",
+    "@vapi-ai/server-sdk": "^1.2.0",
     "cors": "^2.8.6",
     "express": "^5.2.1",
     "mercadopago": "^2.12.0",
