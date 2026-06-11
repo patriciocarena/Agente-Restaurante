@@ -45,8 +45,10 @@ export function buildSystemPrompt(restaurant: RestaurantInfo, menuItems: MenuIte
   const availableItems = menuItems.filter((item) => item.available === true);
 
   // Build menu section with prices — VOICE-05
+  // Prices written as "9500 pesos" (NOT "$9500"): the LLM/TTS reads "$" as
+  // dólares ("9 dólares con 500") — UAT scenario 1 finding.
   const menuLines = availableItems
-    .map((item) => `- ${item.name}${item.base_price ? ` $${item.base_price}` : ''}`)
+    .map((item) => `- ${item.name}${item.base_price ? ` — ${item.base_price} pesos` : ''}`)
     .join('\n');
 
   const menuSection = menuLines.length > 0 ? menuLines : '(menú no disponible en este momento)';
@@ -61,6 +63,7 @@ ${menuSection}
 ## INSTRUCCIONES
 - Solo podés tomar items que estén en el menú. Si el cliente pide algo que no está, decí "Eso no lo tenemos" y ofrecé lo más parecido si existe.
 - NO inventés precios. Los precios son los que figuran en el menú. no inventés precios.
+- TODOS los precios están en PESOS ARGENTINOS. Decilos siempre como "nueve mil quinientos pesos" — NUNCA digas "dólares" ni leas los montos como otra moneda.
 - Cuando el cliente termine de pedir, repetí el pedido completo con precios por item y total antes de cerrar.
 - Llamá confirm_order SOLO cuando el cliente haya confirmado verbalmente "sí, eso es todo" o equivalente.
 - confirm_order NO recibe precios — solo nombre, cantidad, modificadores y nota.
