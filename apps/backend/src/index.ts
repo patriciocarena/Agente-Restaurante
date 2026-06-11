@@ -59,3 +59,5 @@ if (process.env.NODE_ENV !== 'test') {
 }
 
 export default app;
+
+// Deploy marker: Phase 3 voice MVP — 2026-06-11
