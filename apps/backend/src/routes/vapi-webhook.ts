@@ -353,13 +353,18 @@ async function handleEndOfCall(message: Record<string, unknown>, res: Response):
     return res.status(200).send();
   }
 
-  // Compute duration in seconds
-  const startedAt = call?.startedAt;
-  const endedAt = call?.endedAt;
+  // Compute duration in seconds.
+  // UAT finding: call.startedAt/endedAt arrive null in end-of-call-report —
+  // the timestamps and duration live at the message level in current Vapi payloads.
+  const startedAt = (message.startedAt as string | undefined) ?? call?.startedAt;
+  const endedAt = (message.endedAt as string | undefined) ?? call?.endedAt;
+  const reportedDuration = message.durationSeconds as number | undefined;
   const durationSeconds =
-    startedAt && endedAt
-      ? Math.round((new Date(endedAt).getTime() - new Date(startedAt).getTime()) / 1000)
-      : null;
+    reportedDuration != null
+      ? Math.round(reportedDuration)
+      : startedAt && endedAt
+        ? Math.round((new Date(endedAt).getTime() - new Date(startedAt).getTime()) / 1000)
+        : null;
 
   const costUsd = (message.cost as number | undefined) ?? null;
   const artifact = message.artifact as { transcript?: string } | undefined;
