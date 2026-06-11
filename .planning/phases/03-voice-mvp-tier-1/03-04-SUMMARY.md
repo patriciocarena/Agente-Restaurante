@@ -40,11 +40,15 @@ metrics:
 | 1 | onboarding.ts — create Vapi assistant on finish (ONB-05) | 86549a9 | apps/backend/src/routes/onboarding.ts |
 | 2 | menu-items.ts + menu-categories.ts — fire-and-forget resync (MENU-05) | 6435f63 | apps/backend/src/routes/menu-items.ts, menu-categories.ts, menu-items.test.ts |
 
-## Task 3: Checkpoint (AWAITING HUMAN ACTION)
+## Task 3: Checkpoint (RESOLVED 2026-06-11)
 
-**Status:** Not started — blocked on human action (Railway env vars + Supabase dev hours).
+**Status:** Complete — all manual setup items resolved during orchestrator session:
 
-See Checkpoint Details section below.
+- Migration 0003 applied to live Supabase via MCP (user-authorized): `call_logs`, `idx_restaurants_vapi_assistant_id`, `increment_order_counter` — all verified present
+- "wonder" dev hours seeded: 7 days open 00:00–23:59 (`is_closed = false` verified)
+- `VAPI_API_KEY` + `VAPI_WEBHOOK_SECRET` set on Railway via CLI (secret newly generated, also written to local `.env`)
+- Phase 3 code deployed to Railway (deployment `d3f90258`, Node 24): webhook `/api/vapi/tool-calls` live, returns 401 without secret
+- Deploy fixes required along the way: vapi.ts SDK type errors (817bb6d), node>=22 engines (e242972)
 
 ## What Was Built
 
