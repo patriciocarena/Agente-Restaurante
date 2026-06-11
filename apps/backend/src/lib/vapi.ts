@@ -3,7 +3,7 @@
 // assistant create and sync (prompt update).
 // Requirements: ONB-05, MENU-05, VOICE-01–05, VOICE-09, VOICE-10
 
-import { VapiClient } from '@vapi-ai/server-sdk';
+import { VapiClient, Vapi } from '@vapi-ai/server-sdk';
 import { buildSystemPrompt } from './system-prompt';
 import { supabaseAdmin } from './supabase';
 import { logger } from './logger';
@@ -27,14 +27,15 @@ export function getVapiClient(): VapiClient {
 // Parameters MUST NOT contain unit_price, price, or total — the backend
 // recalculates from menu_items (see Plan 03-03).
 // ---------------------------------------------------------------------------
-export const confirmOrderTool = {
-  type: 'function' as const,
+export const confirmOrderTool: Vapi.GoogleModelToolsItem.Function = {
+  type: 'function',
   async: false,
   server: {
     url: `${process.env.BACKEND_URL}/api/vapi/tool-calls`,
-    // CRITICAL: secret makes Vapi send X-Vapi-Secret header on every request.
+    // CRITICAL: makes Vapi send X-Vapi-Secret header on every request.
     // Without it the Plan 03 webhook correctly 401s every tool-call.
-    secret: process.env.VAPI_WEBHOOK_SECRET,
+    // SDK 1.2.0 Server type has no `secret` field — custom headers instead.
+    headers: { 'x-vapi-secret': process.env.VAPI_WEBHOOK_SECRET },
   },
   function: {
     name: 'confirm_order',
@@ -145,7 +146,7 @@ export async function createVapiAssistant(restaurant: {
     server: {
       url: `${process.env.BACKEND_URL}/api/vapi/tool-calls`,
       // CRITICAL: ensures Vapi sends X-Vapi-Secret on end-of-call-report events
-      secret: process.env.VAPI_WEBHOOK_SECRET,
+      headers: { 'x-vapi-secret': process.env.VAPI_WEBHOOK_SECRET },
     },
   });
 
@@ -182,7 +183,8 @@ export async function syncAssistantPrompt(restaurantId: string): Promise<void> {
 
     const newPrompt = buildSystemPrompt(restaurant, menuItems ?? []);
 
-    await getVapiClient().assistants.update(restaurant.vapi_assistant_id, {
+    await getVapiClient().assistants.update({
+      id: restaurant.vapi_assistant_id,
       model: {
         provider: 'google',
         model: 'gemini-2.5-flash',
