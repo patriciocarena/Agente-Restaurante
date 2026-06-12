@@ -5,6 +5,21 @@
 
 import { z } from 'zod';
 
+// Celular AR en cualquiera de sus formas usuales (mismas reglas que el backend:
+// lib/whatsapp.ts normalizeArWhatsApp). Acepta +549..., 549..., +54..., 0..15..,
+// área+abonado de 10 dígitos.
+function isValidArMobile(cleaned: string): boolean {
+  let digits = cleaned.replace(/^\+/, '');
+  if (digits.startsWith('0')) digits = digits.slice(1);
+  if (/^549\d{10}$/.test(digits)) return true;
+  if (/^54\d{10}$/.test(digits)) return true;
+  if (/^\d{10}$/.test(digits)) return true;
+  if (/^\d{12}$/.test(digits)) {
+    return [2, 3, 4].some((areaLen) => digits.slice(areaLen, areaLen + 2) === '15');
+  }
+  return false;
+}
+
 // D-01: orden y campos del wizard. D-03: validación per-step con Zod.
 export const onboardingSchema = z.object({
   name: z.string()
@@ -14,6 +29,15 @@ export const onboardingSchema = z.object({
     .regex(/^[a-z0-9-]+$/, 'Solo minúsculas, números y guiones.'),
   address: z.string()
     .min(5, 'Poné la dirección completa.'),
+  // WhatsApp para recibir pedidos (pivot Fase 4). Opcional; siempre celular AR.
+  // El backend re-normaliza — acá solo limpiamos y validamos formato amigable.
+  whatsapp_number: z.string()
+    .transform((v) => v.replace(/[\s\-().]/g, ''))
+    .refine(
+      (v) => v === '' || isValidArMobile(v),
+      'Número de celular argentino, ej: 351 1234567',
+    )
+    .optional(),
   delivery_zones: z.string().optional(),
   agent_name: z.string().min(1, 'Este campo es obligatorio.'),
   hours: z.array(z.object({
@@ -40,7 +64,7 @@ export type OnboardingData = z.infer<typeof onboardingSchema>;
 // Per-step trigger() field arrays (D-03).
 // Cada elemento corresponde a los campos a validar en ese paso.
 export const STEP_FIELDS: Array<Array<keyof OnboardingData>> = [
-  ['name', 'slug', 'address'],
+  ['name', 'slug', 'address', 'whatsapp_number'],
   ['hours'],
   ['delivery_zones'],
   ['agent_name'],

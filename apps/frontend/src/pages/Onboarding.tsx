@@ -39,6 +39,7 @@ export default function Onboarding() {
       name: '',
       slug: '',
       address: '',
+      whatsapp_number: '',
       agent_name: 'Sofía',
       delivery_zones: '',
       hours: DEFAULT_HOURS,
@@ -74,12 +75,14 @@ export default function Onboarding() {
           await setup.patchMe({
             name: data.name,
             address: data.address,
+            whatsapp_number: data.whatsapp_number || null,
             onboarding_step: 1,
           });
         } else {
           const created = await setup.createRestaurant({
             name: data.name,
             address: data.address,
+            whatsapp_number: data.whatsapp_number || undefined,
           });
           if (!created) return; // error already set in setup.error
         }

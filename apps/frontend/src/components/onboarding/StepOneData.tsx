@@ -90,6 +90,24 @@ export function StepOneData() {
             <p className="text-xs text-destructive">{errors.address.message}</p>
           )}
         </div>
+
+        <div className="flex flex-col gap-1.5">
+          <label htmlFor="whatsapp_number" className="text-sm font-medium">
+            WhatsApp para recibir pedidos
+          </label>
+          <Input
+            {...register('whatsapp_number')}
+            id="whatsapp_number"
+            type="tel"
+            placeholder="351 1234567"
+          />
+          <p className="text-xs text-muted-foreground">
+            Te mandamos cada pedido nuevo a este WhatsApp. Podés dejarlo vacío y cargarlo después.
+          </p>
+          {errors.whatsapp_number && (
+            <p className="text-xs text-destructive">{errors.whatsapp_number.message}</p>
+          )}
+        </div>
       </div>
     </div>
   );

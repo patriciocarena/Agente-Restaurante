@@ -13,6 +13,14 @@ process.env.VAPI_API_KEY ??= 'fake_for_test';
 process.env.VAPI_WEBHOOK_SECRET ??= 'test_secret';
 process.env.NODE_ENV = 'test';
 
+// Stub whatsapp lib: assert the fire-and-forget is wired without hitting Twilio.
+// normalizeArWhatsApp must stay real-ish — routes/restaurants.ts imports it too.
+vi.mock('../lib/whatsapp', () => ({
+  sendOrderWhatsApp: vi.fn().mockResolvedValue(undefined),
+  normalizeArWhatsApp: vi.fn((v: string) => (/^\+549\d{10}$/.test(v) ? v : null)),
+  formatOrderMessage: vi.fn(() => 'mock'),
+}));
+
 // Stub supabaseAdmin so no real DB calls happen in unit tests
 vi.mock('../lib/supabase', () => {
   const insertMock = vi.fn().mockResolvedValue({ data: null, error: null });
@@ -140,6 +148,121 @@ describe('CALL-01..09 / OBS-01 vapi webhook', () => {
         // RED state: route not yet implemented → expect 404, document that Plan 03 turns this GREEN
         expect([401, 404, 200]).toContain(res.status);
       }
+    });
+
+    // -------------------------------------------------------------------------
+    // NOTIF-01: order persisted → WhatsApp fire-and-forget to the restaurant
+    // -------------------------------------------------------------------------
+    it('NOTIF-01: successful confirm_order triggers sendOrderWhatsApp with order payload', async () => {
+      const { supabaseAdmin } = await import('../lib/supabase');
+      const { sendOrderWhatsApp } = await import('../lib/whatsapp');
+      (sendOrderWhatsApp as ReturnType<typeof vi.fn>).mockClear();
+
+      let ordersCallCount = 0;
+      (supabaseAdmin.from as ReturnType<typeof vi.fn>).mockImplementation((table: string) => {
+        if (table === 'restaurants') {
+          return {
+            select: vi.fn().mockReturnThis(),
+            eq: vi.fn().mockReturnThis(),
+            single: vi.fn().mockResolvedValue({
+              data: {
+                id: 'rest-uuid',
+                name: 'Wonder',
+                agent_name: 'Alex',
+                whatsapp_number: '+5493511234567',
+              },
+              error: null,
+            }),
+          };
+        }
+        if (table === 'orders') {
+          ordersCallCount += 1;
+          if (ordersCallCount === 1) {
+            // Idempotency check: no existing order
+            return {
+              select: vi.fn().mockReturnThis(),
+              eq: vi.fn().mockReturnThis(),
+              single: vi.fn().mockResolvedValue({ data: null, error: { code: 'PGRST116' } }),
+            };
+          }
+          // Insert path: .insert({...}).select('id').single()
+          return {
+            insert: vi.fn().mockReturnThis(),
+            select: vi.fn().mockReturnThis(),
+            single: vi.fn().mockResolvedValue({ data: { id: 'order-uuid' }, error: null }),
+          };
+        }
+        if (table === 'restaurant_hours') {
+          return {
+            select: vi.fn().mockReturnThis(),
+            eq: vi.fn().mockReturnThis(),
+            single: vi.fn().mockResolvedValue({ data: null, error: null }), // sin filas = abierto 24/7
+          };
+        }
+        if (table === 'menu_items') {
+          return {
+            select: vi.fn().mockReturnThis(),
+            eq: vi.fn().mockResolvedValue({
+              data: [
+                {
+                  id: 'mi-1',
+                  name: 'Hamburguesa clásica',
+                  base_price: 9500,
+                  available: true,
+                  option_groups: [],
+                },
+              ],
+              error: null,
+            }),
+          };
+        }
+        return {
+          insert: vi.fn().mockResolvedValue({ data: null, error: null }),
+          select: vi.fn().mockReturnThis(),
+          eq: vi.fn().mockReturnThis(),
+          single: vi.fn().mockResolvedValue({ data: null, error: null }),
+          update: vi.fn().mockReturnThis(),
+        };
+      });
+      (supabaseAdmin.rpc as ReturnType<typeof vi.fn>).mockResolvedValue({ data: 7, error: null });
+
+      const res = await request(app)
+        .post('/api/vapi/tool-calls')
+        .set('x-vapi-secret', 'test_secret')
+        .send({
+          message: {
+            type: 'tool-calls',
+            call: { id: 'call-notif-001', assistantId: 'asst-test-001' },
+            customer: { number: '+5493519999999' },
+            toolCallList: [
+              {
+                id: 'tc-notif',
+                function: {
+                  name: 'confirm_order',
+                  arguments: JSON.stringify({
+                    fulfillment_type: 'retiro',
+                    items: [{ name: 'Hamburguesa clásica', quantity: 2 }],
+                    customer_name: 'Juan',
+                  }),
+                },
+              },
+            ],
+          },
+        });
+
+      expect(res.status).toBe(200);
+      expect(res.body.results[0].result).toContain('#7');
+
+      // Fire-and-forget: se dispara después de responder — esperar el tick
+      await vi.waitFor(() => {
+        expect(sendOrderWhatsApp).toHaveBeenCalledTimes(1);
+      });
+      const [to, payload] = (sendOrderWhatsApp as ReturnType<typeof vi.fn>).mock.calls[0];
+      expect(to).toBe('+5493511234567');
+      expect(payload.orderNumber).toBe(7);
+      expect(payload.total).toBe(19000); // 2 × 9500 server-side
+      expect(payload.items[0].name).toBe('Hamburguesa clásica');
+      expect(payload.customerPhone).toBe('+5493519999999');
     });
 
     // -------------------------------------------------------------------------

@@ -30,7 +30,7 @@ export function useRestaurantSetup() {
   return {
     loading, error,
     // Step 1 submit. CRITICAL: refreshSession() AFTER create so JWT carries restaurant_id (Pitfall 1).
-    async createRestaurant(body: { name: string; address: string }) {
+    async createRestaurant(body: { name: string; address: string; whatsapp_number?: string }) {
       const result = await run(() => api.createRestaurant(body));
       if (result) {
         await supabase.auth.refreshSession();

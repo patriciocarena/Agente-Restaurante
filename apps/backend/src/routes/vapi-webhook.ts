@@ -8,6 +8,7 @@
 import { Router, Request, Response } from 'express';
 import { supabaseAdmin } from '../lib/supabase';
 import { logger } from '../lib/logger';
+import { sendOrderWhatsApp } from '../lib/whatsapp';
 
 export const vapiWebhookRouter = Router();
 
@@ -87,7 +88,7 @@ async function handleToolCalls(message: Record<string, unknown>, res: Response):
   // CALL-03: Route by assistantId → tenant
   const { data: restaurant, error: restError } = await supabaseAdmin
     .from('restaurants')
-    .select('id, name, agent_name')
+    .select('id, name, agent_name, whatsapp_number')
     .eq('vapi_assistant_id', assistantId)
     .single();
 
@@ -314,6 +315,32 @@ async function handleToolCalls(message: Record<string, unknown>, res: Response):
     restaurant_id: restaurant.id,
     order_number: orderNumber,
     total,
+  });
+
+  // NOTIF-01: WhatsApp al restaurante con el detalle. Fire-and-forget — la
+  // respuesta de voz a Vapi no espera al envío; sendOrderWhatsApp traga sus
+  // propios errores (el .catch es belt-and-suspenders). Do NOT await.
+  sendOrderWhatsApp(restaurant.whatsapp_number ?? null, {
+    orderNumber: orderNumber as number,
+    restaurantName: restaurant.name,
+    customerName: args.customer_name,
+    customerPhone,
+    fulfillmentType: args.fulfillment_type,
+    deliveryAddress: args.delivery_address ?? null,
+    items: orderLines.map((line) => ({
+      name: line.name,
+      quantity: line.quantity,
+      unit_price: line.unit_price,
+      modifiers: line.modifiers,
+      note: line.note,
+    })),
+    total,
+  }).catch((err) => {
+    logger.error('whatsapp notify failed', {
+      restaurant_id: restaurant.id,
+      order_number: orderNumber,
+      error: String(err),
+    });
   });
 
   return res.json({

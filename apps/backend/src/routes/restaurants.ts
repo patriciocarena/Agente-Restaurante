@@ -7,6 +7,7 @@ import { requireAuth, AuthedRequest } from '../middleware/auth';
 import { supabaseAdmin } from '../lib/supabase';
 import { generateUniqueSlug } from '../lib/slug';
 import { logger } from '../lib/logger';
+import { normalizeArWhatsApp } from '../lib/whatsapp';
 
 export const restaurantsRouter = Router();
 
@@ -18,7 +19,7 @@ restaurantsRouter.use(requireAuth);
 restaurantsRouter.post('/', async (req: Request, res: Response) => {
   try {
     const authedReq = req as AuthedRequest;
-    const { name, address, delivery_zones, agent_name } = req.body;
+    const { name, address, delivery_zones, agent_name, whatsapp_number } = req.body;
 
     // Validación básica
     if (!name || typeof name !== 'string' || name.length < 2) {
@@ -26,6 +27,18 @@ restaurantsRouter.post('/', async (req: Request, res: Response) => {
     }
     if (!address || typeof address !== 'string' || address.length < 5) {
       return res.status(400).json({ error: 'address_required_min_5' });
+    }
+
+    // WhatsApp de pedidos: opcional; si viene, debe ser celular AR válido
+    let normalizedWhatsApp: string | null = null;
+    if (whatsapp_number !== undefined && whatsapp_number !== null && whatsapp_number !== '') {
+      if (typeof whatsapp_number !== 'string') {
+        return res.status(400).json({ error: 'whatsapp_number_invalid' });
+      }
+      normalizedWhatsApp = normalizeArWhatsApp(whatsapp_number);
+      if (!normalizedWhatsApp) {
+        return res.status(400).json({ error: 'whatsapp_number_invalid' });
+      }
     }
 
     // Generar slug único
@@ -43,6 +56,7 @@ restaurantsRouter.post('/', async (req: Request, res: Response) => {
         address,
         delivery_zones: delivery_zones || null,
         agent_name: agent_name || 'Sofía',
+        whatsapp_number: normalizedWhatsApp,
       })
       .select()
       .single();
@@ -148,7 +162,7 @@ restaurantsRouter.patch('/me', async (req: Request, res: Response) => {
       return res.status(404).json({ error: 'no_restaurant' });
     }
 
-    const { name, address, agent_name, delivery_zones, onboarding_step } = req.body;
+    const { name, address, agent_name, delivery_zones, onboarding_step, whatsapp_number } = req.body;
 
     // Mass-assignment guard: SOLO estos campos se permiten.
     // Cualquier campo fuera de este set se ignora. NUNCA pasar req.body directo.
@@ -184,6 +198,21 @@ restaurantsRouter.patch('/me', async (req: Request, res: Response) => {
         return res.status(400).json({ error: 'onboarding_step_invalid' });
       }
       updateData.onboarding_step = onboarding_step;
+    }
+
+    if (whatsapp_number !== undefined) {
+      // null o '' limpian el campo; si viene valor, debe ser celular AR válido
+      if (whatsapp_number === null || whatsapp_number === '') {
+        updateData.whatsapp_number = null;
+      } else if (typeof whatsapp_number !== 'string') {
+        return res.status(400).json({ error: 'whatsapp_number_invalid' });
+      } else {
+        const normalized = normalizeArWhatsApp(whatsapp_number);
+        if (!normalized) {
+          return res.status(400).json({ error: 'whatsapp_number_invalid' });
+        }
+        updateData.whatsapp_number = normalized;
+      }
     }
 
     if (Object.keys(updateData).length === 0) {

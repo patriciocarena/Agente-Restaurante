@@ -31,9 +31,9 @@ export const api = {
   finishOnboarding: () => call<{ twilio_number: string; mode: 'us-forwarding'; forwarding_docs_url: string; forwarding_instructions: Record<string,string> }>('/api/onboarding/finish', { method: 'POST' }),
   retryProvision: () => call<{ twilio_number: string; mode: 'us-forwarding'; forwarding_docs_url: string; forwarding_instructions: Record<string,string> }>('/api/phone/retry-provision', { method: 'POST' }),
   // Restaurants
-  createRestaurant: (body: { name: string; address: string }) => call<{ restaurant: { id: string; slug: string; name: string; agent_name: string } }>('/api/restaurants', { method: 'POST', body: JSON.stringify(body) }),
+  createRestaurant: (body: { name: string; address: string; whatsapp_number?: string }) => call<{ restaurant: { id: string; slug: string; name: string; agent_name: string } }>('/api/restaurants', { method: 'POST', body: JSON.stringify(body) }),
   getMe: () => call<{ restaurant: any; hours: any[]; delivery_zones: string|null }>('/api/restaurants/me'),
-  patchMe: (body: Partial<{ name: string; address: string; agent_name: string; delivery_zones: string; onboarding_step: number }>) => call<{ restaurant: any }>('/api/restaurants/me', { method: 'PATCH', body: JSON.stringify(body) }),
+  patchMe: (body: Partial<{ name: string; address: string; agent_name: string; delivery_zones: string; onboarding_step: number; whatsapp_number: string | null }>) => call<{ restaurant: any }>('/api/restaurants/me', { method: 'PATCH', body: JSON.stringify(body) }),
   putHours: (body: { hours: Array<{ day_of_week: number; open_time: string|null; close_time: string|null; is_closed: boolean }> }) => call<{ ok: true }>('/api/restaurants/me/hours', { method: 'PUT', body: JSON.stringify(body) }),
 
   // Menu Categories (MENU-01)
