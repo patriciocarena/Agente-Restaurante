@@ -29,7 +29,7 @@ Phase: 4
 Plan: Not started
 Next: Phase 03 (voice-mvp) — kickoff: discuss → plan → execute
 Handoff: .planning/HANDOFF.json + .planning/phases/02-onboarding-menu/.continue-here.md
-Last activity: 2026-06-12
+Last activity: 2026-06-12 -- Quick task 260612-m94: carga manual de restaurantes (YAML + CLI)
 
 Progress Phase 1: [██████████] 100%
 Progress Phase 2: [█████████░] 6/6 plans implemented, UAT pending
@@ -88,10 +88,16 @@ Recent decisions affecting current work:
 
 ### Blockers/Concerns
 
-- **Twilio AR / ENACOM availability** — pendiente de research en Phase 2 antes de aprovisionar número.
-- **Wonder menu data** — el usuario está consiguiendo precios reales; necesario para seed Phase 2.
-- **AR-language competitor scan** — pendiente para early Phase 2.
-- **Latency baseline** — no medible hasta Phase 3; preparar para renegociar NFR <800ms.
+- **Twilio AR / ENACOM availability** — pendiente de research antes de aprovisionar número real (la demo usa web calls de Vapi).
+- **Wonder menu data** — el usuario está consiguiendo precios reales; cuando los tenga se editan en `restaurantes/wonder.yaml` y se corre `pnpm cargar-restaurante`.
+- **Twilio WhatsApp Sandbox** — el join expira a las 72h; para producción real hace falta sender aprobado por Meta (1-3 semanas).
+- **Latency baseline** — pendiente medir NFR <800ms (Phase 5).
+
+### Quick Tasks Completed
+
+| # | Description | Date | Commit | Directory |
+|---|-------------|------|--------|-----------|
+| 260612-m94 | Carga manual de restaurantes: YAML + CLI cargar-restaurante (supersede onboarding web) | 2026-06-12 | cb5828a | [260612-m94-carga-manual-de-restaurantes-yaml-script](./quick/260612-m94-carga-manual-de-restaurantes-yaml-script/) |
 
 ## Deferred Items
 
