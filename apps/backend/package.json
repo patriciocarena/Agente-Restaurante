@@ -7,7 +7,8 @@
     "start": "node dist/index.js",
     "dev": "tsx watch --env-file .env src/index.ts",
     "test": "vitest run",
-    "lint": "tsc --noEmit"
+    "lint": "tsc --noEmit",
+    "cargar-restaurante": "tsx --env-file .env src/scripts/cargar-restaurante.ts"
   },
   "dependencies": {
     "@agente-restaurante/shared": "workspace:*",

@@ -6,7 +6,8 @@
     "build": "pnpm -r build",
     "test": "pnpm -r --if-present run test",
     "lint": "pnpm -r lint",
-    "check-sec04": "bash scripts/check-sec04.sh"
+    "check-sec04": "bash scripts/check-sec04.sh",
+    "cargar-restaurante": "pnpm --filter @agente-restaurante/backend cargar-restaurante --"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^6.9.1",
