@@ -18,8 +18,8 @@ SaaS multi-tenant que automatiza el teléfono del restaurante: cuando un cliente
 
 - [ ] **Phase 1: Foundations** - Monorepo, Supabase schema + RLS estricta, auth, deploy targets, MP client stub
 - [ ] **Phase 2: Onboarding & Menu** - Wizard de signup + RestaurantSetup (horario, zonas, voice config) + MenuEditor con disponibilidad mid-shift
-- [ ] **Phase 3: Voice MVP (Tier 1)** - Vapi assistant lifecycle + webhook con HMAC + idempotencia + recálculo server-side de totales
-- [ ] **Phase 4: WhatsApp Order Notifications** - Pedido confirmado → WhatsApp al restaurante con el detalle (PIVOT 2026-06-11: reemplaza KDS; MVP demo target)
+- [x] **Phase 3: Voice MVP (Tier 1)** ✓ 2026-06-11 - Vapi assistant lifecycle + webhook con HMAC + idempotencia + recálculo server-side de totales
+- [x] **Phase 4: WhatsApp Order Notifications** ✓ 2026-06-12 - Pedido confirmado → WhatsApp al restaurante con el detalle (PIVOT 2026-06-11: reemplaza KDS; MVP demo target)
 - [ ] **Phase 5: Billing real (Mercado Pago)** - Preapproval, webhook MP, suspensión + reactivación, grace period, historial de cobros
 - [ ] **Phase 6: Hardening + Observability** - Rate limits, latency NFR <800ms, tests adversariales prompt injection es-AR, dashboard de uso/costos, holiday flag
 - [ ] **Phase 7: Cost Optimization Migration (Tier 2)** - Vapi → Pipecat + Twilio → Telnyx (TRIGGERED: ≥3 paying customers OR infra cost > $500/mo)
@@ -133,7 +133,7 @@ Phases 1 → 2 → 3 → 4 (MVP demo gate) → 5 → 6 → [TRIGGER] → 7
 | 1. Foundations | 1/5 | In Progress|  |
 | 2. Onboarding & Menu | 2/6 | In Progress|  |
 | 3. Voice MVP (Tier 1) | 0/TBD | Not started | - |
-| 4. WhatsApp Notifications | inline | In Progress | - |
+| 4. WhatsApp Notifications | inline | Complete | 2026-06-12 |
 | 5. Billing real (MP) | 0/TBD | Not started | - |
 | 6. Hardening + Observability | 0/TBD | Not started | - |
 | 7. Cost Optimization (Tier 2) | 0/TBD | Triggered (waiting) | - |
