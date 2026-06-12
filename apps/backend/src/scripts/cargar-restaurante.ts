@@ -37,14 +37,28 @@ if (!filePath) {
 // ---------------------------------------------------------------------------
 
 async function main() {
-  // Paso 1: leer el archivo
-  const absolutePath = resolve(process.cwd(), filePath as string);
-  let yamlContent: string;
-  try {
-    yamlContent = readFileSync(absolutePath, 'utf-8');
-  } catch (e) {
+  // Paso 1: leer el archivo.
+  // pnpm corre este script con cwd=apps/backend, pero el operador escribe la
+  // ruta desde la raíz del repo. INIT_CWD (lo setea pnpm) apunta a donde se
+  // corrió el comando; probamos también cwd y la raíz del monorepo.
+  const candidates = [
+    process.env.INIT_CWD ? resolve(process.env.INIT_CWD, filePath as string) : null,
+    resolve(process.cwd(), filePath as string),
+    resolve(process.cwd(), '../..', filePath as string),
+  ].filter((p): p is string => p !== null);
+
+  let yamlContent: string | null = null;
+  for (const candidate of candidates) {
+    try {
+      yamlContent = readFileSync(candidate, 'utf-8');
+      break;
+    } catch {
+      // probar el siguiente candidato
+    }
+  }
+  if (yamlContent === null) {
     console.error(
-      `\n❌ No se pudo leer el archivo "${filePath}".\n   Revisá que la ruta sea correcta y que el archivo exista.\n`,
+      `\n❌ No se pudo leer el archivo "${filePath}".\n   Revisá que la ruta sea correcta y que el archivo exista.\n   Rutas probadas:\n${candidates.map((c) => `   - ${c}`).join('\n')}\n`,
     );
     process.exit(1);
   }
