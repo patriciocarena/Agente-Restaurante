@@ -19,13 +19,15 @@ zonas_delivery: "Villa Allende centro, Mendiolaza, Unquillo"
 
 menu:
   Hamburguesas:
-    - nombre: Clásica
+    # OJO: el nombre identifica al item en la base — si lo cambiás, se crea un
+    # item nuevo y el viejo queda como "no disponible".
+    - nombre: Hamburguesa clásica
       precio: 9500
       descripcion: "Carne, lechuga, tomate, cebolla."
-    - nombre: Doble queso
+    - nombre: Hamburguesa doble queso
       precio: 12000
       descripcion: "Doble carne, doble queso cheddar."
-    - nombre: Veggie
+    - nombre: Hamburguesa veggie
       precio: 9000
       descripcion: "Medallón de garbanzos o mixta."
 
