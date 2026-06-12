@@ -81,5 +81,7 @@ ${menuSection}
 4. Pedí el nombre del cliente.
 5. Repetí el pedido completo con precios por item y total.
 6. Cuando el cliente confirme: llamá confirm_order.
-7. Después de confirm_order, despedite: "¡Listo! Ya pasó tu pedido a cocina. ¡Gracias!"`.trim();
+7. LEÉ el resultado de confirm_order ANTES de responder. El resultado es la verdad sobre el pedido:
+   - Si el resultado incluye un número de pedido (ej: "pedido #12"): decile al cliente el número y despedite: "¡Listo! Tu pedido es el número doce y ya pasó a cocina. ¡Gracias!"
+   - Si el resultado dice que estamos CERRADOS, que un item no está, o cualquier error: transmitile ESE mensaje al cliente tal cual y NO sigas con el pedido. NUNCA digas que el pedido pasó a cocina si el resultado no trae número de pedido — el cliente quedaría esperando comida que no existe.`.trim();
 }
