@@ -1,0 +1,54 @@
+# Datos del restaurante piloto Wonder Hamburguesería
+# Editá este archivo para actualizar precios, agregar items o cambiar horarios.
+# Luego corré: pnpm cargar-restaurante restaurantes/wonder.yaml
+# Leé COMO-CARGAR.md para instrucciones paso a paso.
+
+nombre: wonder
+agente: Alex
+direccion: Av. Sáenz Peña 112 Villa Allende
+whatsapp: "+5493516184593"
+
+# Horarios de atención — formato: dia: "HH:MM-HH:MM" o cerrado
+# Durante testing usamos todos los días 00:00-23:59.
+# Horario real de Wonder: lun-mar y dom 20:00-24:00, mie-sab 20:00-00:30
+horarios:
+  todos: "00:00-23:59"
+
+# Zonas de delivery que cubre el restaurante (texto libre)
+zonas_delivery: "Villa Allende centro, Mendiolaza, Unquillo"
+
+menu:
+  Hamburguesas:
+    - nombre: Clásica
+      precio: 9500
+      descripcion: "Carne, lechuga, tomate, cebolla."
+    - nombre: Doble queso
+      precio: 12000
+      descripcion: "Doble carne, doble queso cheddar."
+    - nombre: Veggie
+      precio: 9000
+      descripcion: "Medallón de garbanzos o mixta."
+
+  Acompañamientos:
+    - nombre: Aros de cebolla
+      precio: 6000
+    - nombre: Papas con cheddar
+      precio: 7500
+      descripcion: "Papas con cheddar y panceta."
+    - nombre: Papas fritas
+      precio: 5500
+
+  Bebidas:
+    - nombre: Agua mineral 500ml
+      precio: 2200
+    - nombre: Cerveza artesanal
+      precio: 4500
+      descripcion: "IPA o rubia."
+    - nombre: Coca-Cola 500ml
+      precio: 2800
+
+  Postres:
+    - nombre: Brownie
+      precio: 4800
+    - nombre: Helado
+      precio: 3500

@@ -19,20 +19,24 @@ Requirements for initial release. Each maps to roadmap phases. Pilot: Wonder Ham
 
 ### Onboarding
 
-- [x] **ONB-01**: Wizard de onboarding guía al dueño post-signup: datos del restaurante (nombre, slug, dirección)
-- [x] **ONB-02**: El dueño configura el horario de atención por día de la semana (jsonb `restaurant_hours`)
-- [x] **ONB-03**: El dueño configura zonas de delivery que cubre (texto libre, ej: "Villa Allende centro, Argüello, Saldán")
-- [x] **ONB-04**: El sistema asigna automáticamente un número Twilio AR al restaurante en alta (o muestra instrucciones de forwarding si Twilio AR no es viable según research de Phase 1)
-- [ ] **ONB-05**: El sistema crea automáticamente el Vapi assistant con el system prompt construido desde el menú
-- [x] **ONB-06**: El dueño elige el nombre de la agente (default "Sofía", configurable)
+> **SUPERSEDED 2026-06-12** (QUICK-M94): El onboarding web fue reemplazado por carga manual vía YAML (`pnpm cargar-restaurante`). Los requirements ONB-* quedan como referencia histórica. La funcionalidad equivalente la cubre el script CLI.
+
+- [~] **ONB-01**: ~~Wizard de onboarding guía al dueño post-signup: datos del restaurante (nombre, slug, dirección)~~ **superseded** — cubierto por `restaurantes/wonder.yaml` + `cargar-restaurante`
+- [~] **ONB-02**: ~~El dueño configura el horario de atención por día de la semana (jsonb `restaurant_hours`)~~ **superseded** — cubierto por campo `horarios:` en el YAML
+- [~] **ONB-03**: ~~El dueño configura zonas de delivery que cubre~~ **superseded** — cubierto por campo `zonas_delivery:` en el YAML
+- [~] **ONB-04**: ~~El sistema asigna automáticamente un número Twilio AR al restaurante en alta~~ **superseded** — número se configura manualmente para el piloto
+- [ ] **ONB-05**: El sistema crea automáticamente el Vapi assistant con el system prompt construido desde el menú (cubierto por `cargar-restaurante` paso 7)
+- [~] **ONB-06**: ~~El dueño elige el nombre de la agente (default "Sofía", configurable)~~ **superseded** — cubierto por campo `agente:` en el YAML
 
 ### Menu Management
 
-- [x] **MENU-01**: El dueño puede crear, editar y eliminar categorías del menú (ej: Hamburguesas, Acompañamientos, Bebidas)
-- [ ] **MENU-02**: El dueño puede agregar items con: nombre, descripción, precio, categoría
-- [ ] **MENU-03**: El dueño puede definir modificadores por item con `{name, price_delta}` (ej: "sin cebolla" $0, "extra queso" +$500)
-- [x] **MENU-04**: El dueño puede marcar items como disponibles/no disponibles con un toggle (mid-shift sold-out)
-- [ ] **MENU-05**: Al editar el menú, el Vapi assistant se actualiza con el system prompt nuevo en <60 segundos
+> **SUPERSEDED 2026-06-12** (QUICK-M94): La edición de menú vía frontend web fue reemplazada por carga YAML. MENU-01/02/04 quedan como referencia histórica.
+
+- [~] **MENU-01**: ~~El dueño puede crear, editar y eliminar categorías del menú~~ **superseded** — cubierto por secciones de categorías en el YAML
+- [~] **MENU-02**: ~~El dueño puede agregar items con: nombre, descripción, precio, categoría~~ **superseded** — cubierto por items en el YAML
+- [ ] **MENU-03**: El dueño puede definir modificadores por item con `{name, price_delta}` (ej: "sin cebolla" $0, "extra queso" +$500) — v2 backlog
+- [~] **MENU-04**: ~~El dueño puede marcar items como disponibles/no disponibles con un toggle~~ **superseded** — cubierto por `disponible: false` en el YAML
+- [ ] **MENU-05**: Al editar el menú, el Vapi assistant se actualiza con el system prompt nuevo en <60 segundos (cubierto por `syncAssistantPrompt` en `cargar-restaurante`)
 
 ### Voice Agent
 

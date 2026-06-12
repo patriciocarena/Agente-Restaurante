@@ -17,7 +17,7 @@ SaaS multi-tenant que automatiza el teléfono del restaurante: cuando un cliente
 - Phase 6 is **triggered**, not sequential — activates only when condition is met
 
 - [ ] **Phase 1: Foundations** - Monorepo, Supabase schema + RLS estricta, auth, deploy targets, MP client stub
-- [ ] **Phase 2: Onboarding & Menu** - Wizard de signup + RestaurantSetup (horario, zonas, voice config) + MenuEditor con disponibilidad mid-shift
+- [~] **Phase 2: Onboarding & Menu** ~~Wizard de signup + RestaurantSetup (horario, zonas, voice config) + MenuEditor con disponibilidad mid-shift~~ **superseded por carga manual (YAML)** — frontend congelado como legacy (2026-06-12). Ver [QUICK-M94].
 - [x] **Phase 3: Voice MVP (Tier 1)** ✓ 2026-06-11 - Vapi assistant lifecycle + webhook con HMAC + idempotencia + recálculo server-side de totales
 - [x] **Phase 4: WhatsApp Order Notifications** ✓ 2026-06-12 - Pedido confirmado → WhatsApp al restaurante con el detalle (PIVOT 2026-06-11: reemplaza KDS; MVP demo target)
 - [ ] **Phase 5: Hardening + Observability** - Rate limits, latency NFR <800ms, tests adversariales prompt injection es-AR, dashboard de uso/costos, holiday flag
@@ -45,17 +45,14 @@ Plans:
 **Research flag**: yes — Twilio AR availability under ENACOM (decides Phase 2 onboarding flow: direct AR purchase vs forwarding-from-cell). AR-language competitor scan.
 
 ### Phase 2: Onboarding & Menu
-**Goal**: El dueño completa onboarding guiado y arma su menú con modificadores y disponibilidad — quedando listo para que la agente lo lea.
+
+> **SUPERSEDED 2026-06-12**: El wizard web de onboarding quedó con bugs (`slug_taken`) y es overhead innecesario para un piloto de 1 restaurante. La carga manual por YAML (`pnpm cargar-restaurante`) reemplaza todo el onboarding web. El frontend existente queda **congelado como legacy** — no se borra, no se mantiene activamente. Los datos del piloto Wonder se cargan con `restaurantes/wonder.yaml`. Ver decisión en PROJECT.md Key Decisions.
+
+**Goal (original)**: El dueño completa onboarding guiado y arma su menú con modificadores y disponibilidad — quedando listo para que la agente lo lea.
+**Status**: superseded por carga manual (YAML) — QUICK-M94
 **Depends on**: Phase 1
-**Requirements**: ONB-01, ONB-02, ONB-03, ONB-04, ONB-06, MENU-01, MENU-02, MENU-03, MENU-04
-**Success Criteria** (what must be TRUE):
-  1. Un dueño nuevo termina el wizard de onboarding y llega a un dashboard configurado: nombre, slug, dirección, horario semanal, zonas de delivery, nombre de agente
-  2. Al finalizar onboarding, el sistema le asigna un número Twilio AR (o muestra instrucciones de forwarding) — el dueño puede ver el número en su dashboard
-  3. El dueño puede crear/editar/eliminar categorías e items con precio, descripción y modificadores `{name, price_delta}` — los cambios se persisten en `menu_items` con RLS aplicada
-  4. El dueño puede togglear un item a "no disponible" mid-shift y el cambio queda en DB en <2 segundos
-**Plans**: 6 plans
-**UI hint**: yes
-**Parallelization note**: Backend CRUD (restaurants, menu_items, modificadores, hours, zones) y frontend wizard + MenuEditor pueden planificarse en paralelo.
+**Requirements**: ONB-01, ONB-02, ONB-03, ONB-04, ONB-06, MENU-01, MENU-02, MENU-03, MENU-04 (ver REQUIREMENTS.md — marcados como superseded)
+**Plans**: 6 plans (implementados parcialmente, frontend congelado)
 
 ### Phase 3: Voice MVP (Tier 1)
 **Goal**: Cuando un cliente llama al número del restaurante, la agente toma el pedido en español rioplatense, lo confirma, y el backend persiste un pedido válido (validado contra menú, total recalculado server-side) en `orders`.
