@@ -7,22 +7,21 @@
 
 ## Overview
 
-SaaS multi-tenant que automatiza el teléfono del restaurante: cuando un cliente llama, una agente de voz en español rioplatense atiende, toma el pedido completo y lo notifica a la cocina por WhatsApp con el detalle. El roadmap recorre desde foundations multi-tenant (RLS estricta) → onboarding/menu para que el piloto Wonder pueda cargar datos reales → voice MVP end-to-end (Tier 1: Vapi + Gemini + Azure es-AR) → notificaciones WhatsApp (PIVOT 2026-06-11, ex-KDS) → billing real con Mercado Pago → hardening (rate limits, observabilidad, tests adversariales) → migración de costos a Tier 2 (Pipecat + Telnyx) cuando lo justifique la tracción. Phases 1-4 son ship-ready para demo; Phase 7 es un trigger fase, no secuencial.
+SaaS multi-tenant que automatiza el teléfono del restaurante: cuando un cliente llama, una agente de voz en español rioplatense atiende, toma el pedido completo y lo notifica a la cocina por WhatsApp con el detalle. El roadmap recorre desde foundations multi-tenant (RLS estricta) → onboarding/menu para que el piloto Wonder pueda cargar datos reales → voice MVP end-to-end (Tier 1: Vapi + Gemini + Azure es-AR) → notificaciones WhatsApp (PIVOT 2026-06-11, ex-KDS) → hardening (rate limits, observabilidad, tests adversariales) → migración de costos a Tier 2 (Pipecat + Telnyx) cuando lo justifique la tracción. Phases 1-4 son ship-ready para demo; Phase 6 es un trigger fase, no secuencial (billing Mercado Pago removido del proyecto 2026-06-12: demasiado complejo y riesgoso para esta etapa).
 
 ## Phases
 
 **Phase Numbering:**
 - Integer phases (1, 2, 3): Planned milestone work
 - Decimal phases (2.1, 2.2): Urgent insertions (marked with INSERTED)
-- Phase 7 is **triggered**, not sequential — activates only when condition is met
+- Phase 6 is **triggered**, not sequential — activates only when condition is met
 
 - [ ] **Phase 1: Foundations** - Monorepo, Supabase schema + RLS estricta, auth, deploy targets, MP client stub
 - [ ] **Phase 2: Onboarding & Menu** - Wizard de signup + RestaurantSetup (horario, zonas, voice config) + MenuEditor con disponibilidad mid-shift
 - [x] **Phase 3: Voice MVP (Tier 1)** ✓ 2026-06-11 - Vapi assistant lifecycle + webhook con HMAC + idempotencia + recálculo server-side de totales
 - [x] **Phase 4: WhatsApp Order Notifications** ✓ 2026-06-12 - Pedido confirmado → WhatsApp al restaurante con el detalle (PIVOT 2026-06-11: reemplaza KDS; MVP demo target)
-- [ ] **Phase 5: Billing real (Mercado Pago)** - Preapproval, webhook MP, suspensión + reactivación, grace period, historial de cobros
-- [ ] **Phase 6: Hardening + Observability** - Rate limits, latency NFR <800ms, tests adversariales prompt injection es-AR, dashboard de uso/costos, holiday flag
-- [ ] **Phase 7: Cost Optimization Migration (Tier 2)** - Vapi → Pipecat + Twilio → Telnyx (TRIGGERED: ≥3 paying customers OR infra cost > $500/mo)
+- [ ] **Phase 5: Hardening + Observability** - Rate limits, latency NFR <800ms, tests adversariales prompt injection es-AR, dashboard de uso/costos, holiday flag
+- [ ] **Phase 6: Cost Optimization Migration (Tier 2)** - Vapi → Pipecat + Twilio → Telnyx (TRIGGERED: ≥3 paying customers OR infra cost > $500/mo)
 
 ## Phase Details
 
@@ -84,23 +83,11 @@ Plans:
   3. Restaurante sin `whatsapp_number` configurado → no se envía nada y nada se rompe (skip silencioso)
   4. El dueño puede cargar/editar su WhatsApp (validación de celular AR) desde el onboarding
 **Plans**: ejecutado inline (plan aprobado en sesión 2026-06-11)
-**MVP demo gate**: ✅ Al cierre de Phase 4, el sistema es demoable end-to-end con Wonder. Phases 5-7 son post-demo.
+**MVP demo gate**: ✅ Al cierre de Phase 4, el sistema es demoable end-to-end con Wonder. Phases 5-6 son post-demo.
 
-### Phase 5: Billing real (Mercado Pago)
-**Goal**: El restaurante paga su suscripción mensual via Mercado Pago — el sistema cobra, suspende automáticamente por impago con grace period, y reactiva al ponerse al día.
-**Depends on**: Phase 4
-**Requirements**: BILL-01, BILL-02, BILL-03, BILL-04, BILL-05, BILL-06, BILL-07, BILL-08
-**Success Criteria** (what must be TRUE):
-  1. En signup, el dueño completa el preapproval de Mercado Pago Subscriptions y el sistema dispara la primera carga al activar la cuenta post-onboarding
-  2. El webhook de MP actualiza el estado de `subscriptions` correctamente: `trial` → `active` → `past_due` → `suspended` → `cancelled`, con paths de reactivación
-  3. Una suscripción `past_due` recibe email y mantiene acceso por 7 días (grace period); al pasar a `suspended`, el dashboard muestra "tu suscripción está pausada" y RLS bloquea acceso a operación
-  4. El dueño puede reactivar la suscripción al pagar atrasado y ver historial de cobros desde el dashboard
-**Plans**: 6 plans
-**Research flag**: yes — Mercado Pago Subscriptions latest SDK behavior (sandbox vs prod drift, AR card token quirks, 3DS handling).
-
-### Phase 6: Hardening + Observability
+### Phase 5: Hardening + Observability
 **Goal**: El sistema soporta carga real sin caerse, surfacea costos y errores, mide latency end-to-end, y resiste prompt injection en español — ready para customer #2.
-**Depends on**: Phase 5
+**Depends on**: Phase 4
 **Requirements**: OBS-02, OBS-03, OBS-04, SEC-01, SEC-02, SEC-03, SEC-06
 **Success Criteria** (what must be TRUE):
   1. El dueño tiene un dashboard de uso (pedidos/día, llamadas/día, total facturado) y un superadmin interno ve costos agregados por restaurante (Vapi + Twilio + Azure + Deepgram + Gemini)
@@ -110,15 +97,15 @@ Plans:
   5. El dueño puede marcar el restaurante "cerrado por hoy" sin editar el horario semanal (holiday flag)
 **Plans**: 6 plans
 
-### Phase 7: Cost Optimization Migration (Tier 2)
+### Phase 6: Cost Optimization Migration (Tier 2)
 **Goal**: Migrar Vapi → Pipecat self-hosted y Twilio → Telnyx, manteniendo la misma UX externa y bajando ~30% el costo unitario por llamada.
-**Depends on**: Phase 6 (technical) + **TRIGGER condition** (business)
-**Trigger**: ≥3 paying customers OR infra cost > $500/month — Phase 7 NO ejecuta inmediatamente al cierre de Phase 6, queda en standby hasta el trigger.
+**Depends on**: Phase 5 (technical) + **TRIGGER condition** (business)
+**Trigger**: ≥3 paying customers OR infra cost > $500/month — Phase 6 NO ejecuta inmediatamente al cierre de Phase 5, queda en standby hasta el trigger.
 **Requirements**: (none — this is an infra migration that preserves existing v1 capabilities)
 **Success Criteria** (what must be TRUE):
   1. Un cliente que llama no nota diferencia en la UX: misma voz Azure es-AR, mismo flujo de pedido, misma latency <800ms
-  2. Todos los pedidos siguen llegando al KDS realtime, con totales recalculados, idempotencia, y observabilidad equivalente a Tier 1
-  3. El costo por llamada de 2 minutos baja de ~$0.25 USD a ~$0.17 USD (medido en dashboard de costos de Phase 6)
+  2. Todos los pedidos siguen llegando por WhatsApp, con totales recalculados, idempotencia, y observabilidad equivalente a Tier 1
+  3. El costo por llamada de 2 minutos baja de ~$0.25 USD a ~$0.17 USD (medido en dashboard de costos de Phase 5)
   4. El cutover es zero-downtime para los restaurantes existentes (no requiere re-onboarding ni cambio de número)
 **Plans**: 6 plans
 **Research flag**: yes — Pipecat / LiveKit Agents current maturity, function-calling parity con Vapi, interruption handling, Telnyx AR number availability vs Twilio.
@@ -132,19 +119,18 @@ Phases 1 → 2 → 3 → 4 (MVP demo gate) → 5 → 6 → [TRIGGER] → 7
 |-------|----------------|--------|-----------|
 | 1. Foundations | 1/5 | In Progress|  |
 | 2. Onboarding & Menu | 2/6 | In Progress|  |
-| 3. Voice MVP (Tier 1) | 0/TBD | Not started | - |
+| 3. Voice MVP (Tier 1) | 5/5 | Complete | 2026-06-11 |
 | 4. WhatsApp Notifications | inline | Complete | 2026-06-12 |
-| 5. Billing real (MP) | 0/TBD | Not started | - |
-| 6. Hardening + Observability | 0/TBD | Not started | - |
-| 7. Cost Optimization (Tier 2) | 0/TBD | Triggered (waiting) | - |
+| 5. Hardening + Observability | 0/TBD | Not started | - |
+| 6. Cost Optimization (Tier 2) | 0/TBD | Triggered (waiting) | - |
 
 ## Coverage Summary
 
-- v1 requirements: **65 total**
-- Mapped to phases 1-6: **65** ✓
-- Phase 7: 0 requirements (preservation migration, not new features)
+- v1 requirements: **57 total** (65 originales − 8 BILL removidos 2026-06-12)
+- Mapped to phases 1-6: **57** ✓
+- Phase 6: 0 requirements (preservation migration, not new features)
 - Unmapped: **0** ✓
-- Out of v1 scope (v2 backlog): WhatsApp (WAPP-01..03), Customer recurrence (CUST-01,02), Cost migration features (COST-01,02 — these are realized AS Phase 7 work, not as separate REQ-IDs), Cadetería (DISP-01..03), Voice cloning (VC-01), Bulk ops (BULK-01,02), Multi-country/lang (I18N-01..03), Tier 3 (TIER3-01)
+- Out of v1 scope (v2 backlog): WhatsApp (WAPP-01..03), Customer recurrence (CUST-01,02), Cost migration features (COST-01,02 — these are realized AS Phase 6 work, not as separate REQ-IDs), Cadetería (DISP-01..03), Voice cloning (VC-01), Bulk ops (BULK-01,02), Multi-country/lang (I18N-01..03), Tier 3 (TIER3-01)
 
 ---
 *Roadmap created: 2026-05-07*

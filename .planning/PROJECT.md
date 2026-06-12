@@ -28,12 +28,13 @@ SaaS multi-tenant que automatiza el teléfono de la **hamburguesería**: cuando 
 - [ ] El backend recibe el call de Vapi vía webhook con HMAC validado e idempotencia por `call_id`
 - [ ] El backend recalcula `unit_price` y `total` server-side desde `menu_items` (NO confía en la LLM)
 - [ ] La cocina recibe cada pedido por WhatsApp en <30 segundos de confirmado, con número, cliente, retiro/delivery (+dirección), items con modificadores y total (pivot 2026-06-11, ex-KDS)
-- [ ] Cobro mensual por Mercado Pago Subscriptions con suspensión automática por impago
+- ~~Cobro mensual por Mercado Pago Subscriptions con suspensión automática por impago~~ (removido 2026-06-12 — billing manual hasta que haya tracción)
 - [ ] Cada llamada queda observable: duración, costo, transcripción, errores
 
 ### Out of Scope (v1)
 
 - **Kitchen Display System (dashboard realtime)** — Pivot 2026-06-11: el WhatsApp a la cocina (Twilio Sandbox, sin esperar templates Meta) reemplaza al KDS en el MVP. El dashboard de pedidos con estados (NUEVO → ENTREGADO) pasa a backlog v2.
+- **Billing automatizado (Mercado Pago Subscriptions)** — Removido 2026-06-12: demasiado complejo y riesgoso para esta etapa (preapprovals, webhooks de pago, suspensión por impago). El cobro se maneja manual (transferencia/acuerdo directo) hasta que la tracción justifique automatizar. Revierte parcialmente la decisión "Auth + Billing real desde v1".
 - **Despacho/asignación de cadetes integrado** — v1 captura dirección pero el restaurante usa SU sistema actual de cadetería (cadetes propios o Rappi/PedidosYa) para despachar. No tracking de cadetes en la app.
 - **Integración con PedidosYa / Rappi / Cabify** — fuera de scope para producto inicial. El restaurante usa SUS canales existentes.
 - **Validación automática de dirección (geocoding)** — la dirección se guarda como texto libre. Validar contra zonas de cobertura o calcular distancia/tarifa de delivery va a v2.

@@ -76,16 +76,9 @@ Requirements for initial release. Each maps to roadmap phases. Pilot: Wonder Ham
 
 KDS-01..09 (dashboard realtime, estados NUEVO→ENTREGADO, dark mode, tablet) quedan documentados en el historial de git y pasan al backlog v2 — no son parte del MVP.
 
-### Billing (Mercado Pago)
+### Billing (removido del proyecto 2026-06-12)
 
-- [ ] **BILL-01**: Al hacer signup, el dueño completa preapproval de Mercado Pago Subscriptions
-- [ ] **BILL-02**: La primera carga sucede al activar la cuenta (después de onboarding completo)
-- [ ] **BILL-03**: La carga recurrente sucede mensualmente
-- [ ] **BILL-04**: Webhook de MP actualiza estado de suscripción: `trial`, `active`, `past_due`, `suspended`, `cancelled`
-- [ ] **BILL-05**: Cuando una suscripción pasa a `past_due`, hay un grace period de 7 días antes de suspender (envío de email)
-- [ ] **BILL-06**: Cuando una suscripción se suspende, RLS bloquea el acceso al dashboard (mensaje "tu suscripción está pausada")
-- [ ] **BILL-07**: El dueño puede reactivar suscripción al pagar atrasado
-- [ ] **BILL-08**: El dueño puede ver historial de cobros desde el dashboard
+> BILL-01..08 (Mercado Pago Subscriptions: preapproval, cobros recurrentes, suspensión por impago, reactivación, historial) **removidos por decisión del usuario** — demasiado complejos y riesgosos para esta etapa. El cobro a clientes se manejará manualmente (transferencia/acuerdo directo) hasta que la tracción justifique automatizar. Detalle en historial de git.
 
 ### Observability
 
@@ -214,14 +207,6 @@ Mapeo de requirement → fase del roadmap. Llenar después de roadmap creation.
 | NOTIF-03 | Phase 4 | Implemented (pivot 2026-06-11) |
 | NOTIF-04 | Phase 4 | Implemented (pivot 2026-06-11) |
 | NOTIF-05 | Phase 4 | Implemented (pivot 2026-06-11) |
-| BILL-01 | Phase 5 | Pending |
-| BILL-02 | Phase 5 | Pending |
-| BILL-03 | Phase 5 | Pending |
-| BILL-04 | Phase 5 | Pending |
-| BILL-05 | Phase 5 | Pending |
-| BILL-06 | Phase 5 | Pending |
-| BILL-07 | Phase 5 | Pending |
-| BILL-08 | Phase 5 | Pending |
 | OBS-01 | Phase 3 | Pending |
 | OBS-02 | Phase 6 | Pending |
 | OBS-03 | Phase 6 | Pending |
