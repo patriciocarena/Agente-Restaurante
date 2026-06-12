@@ -2,7 +2,7 @@
 
 ## What This Is
 
-SaaS multi-tenant que automatiza el teléfono de la **hamburguesería**: cuando un cliente llama, una agente de voz en español rioplatense atiende, toma el pedido completo (con modificadores, cantidades, retiro o delivery con dirección), lo confirma en voz alta y lo entrega a la cocina vía Kitchen Display System (dashboard real-time). Vertical focalizado en **hamburgueserías argentinas** (segmento creciente, menú estructurado con combos y modificadores predecibles, mix retiro+delivery), donde el teléfono se satura en hora pico y se pierden pedidos.
+SaaS multi-tenant que automatiza el teléfono de la **hamburguesería**: cuando un cliente llama, una agente de voz en español rioplatense atiende, toma el pedido completo (con modificadores, cantidades, retiro o delivery con dirección), lo confirma en voz alta y **se lo notifica a la cocina por WhatsApp con el detalle del pedido** (pivot 2026-06-11: reemplaza al Kitchen Display System, movido a backlog v2). Vertical focalizado en **hamburgueserías argentinas** (segmento creciente, menú estructurado con combos y modificadores predecibles, mix retiro+delivery), donde el teléfono se satura en hora pico y se pierden pedidos.
 
 ## Core Value
 
@@ -27,16 +27,13 @@ SaaS multi-tenant que automatiza el teléfono de la **hamburguesería**: cuando 
 - [ ] Fuera de horario, la agente avisa que está cerrado y cuelga (no toma pedido)
 - [ ] El backend recibe el call de Vapi vía webhook con HMAC validado e idempotencia por `call_id`
 - [ ] El backend recalcula `unit_price` y `total` server-side desde `menu_items` (NO confía en la LLM)
-- [ ] La cocina ve el pedido en el dashboard en <2 segundos del fin de la llamada (real-time Supabase)
-- [ ] El dashboard distingue claramente pedidos retiro vs delivery (con dirección visible para delivery)
-- [ ] El dashboard funciona en tablet Android barata, dark mode, con sonido de notificación
-- [ ] El restaurante puede mover el pedido entre estados: NUEVO → EN PREPARACIÓN → LISTO → ENTREGADO
+- [ ] La cocina recibe cada pedido por WhatsApp en <30 segundos de confirmado, con número, cliente, retiro/delivery (+dirección), items con modificadores y total (pivot 2026-06-11, ex-KDS)
 - [ ] Cobro mensual por Mercado Pago Subscriptions con suspensión automática por impago
 - [ ] Cada llamada queda observable: duración, costo, transcripción, errores
 
 ### Out of Scope (v1)
 
-- **WhatsApp a la cocina** — Se difiere hasta tener templates aprobados por Meta (proceso de 1-3 semanas que destrabaría el MVP). El KDS cubre la necesidad inmediata.
+- **Kitchen Display System (dashboard realtime)** — Pivot 2026-06-11: el WhatsApp a la cocina (Twilio Sandbox, sin esperar templates Meta) reemplaza al KDS en el MVP. El dashboard de pedidos con estados (NUEVO → ENTREGADO) pasa a backlog v2.
 - **Despacho/asignación de cadetes integrado** — v1 captura dirección pero el restaurante usa SU sistema actual de cadetería (cadetes propios o Rappi/PedidosYa) para despachar. No tracking de cadetes en la app.
 - **Integración con PedidosYa / Rappi / Cabify** — fuera de scope para producto inicial. El restaurante usa SUS canales existentes.
 - **Validación automática de dirección (geocoding)** — la dirección se guarda como texto libre. Validar contra zonas de cobertura o calcular distancia/tarifa de delivery va a v2.
@@ -88,6 +85,8 @@ SaaS multi-tenant que automatiza el teléfono de la **hamburguesería**: cuando 
 | Spec original `gemini-2.0-flash` → corregido a `gemini-2.5-flash` | Inconsistencia en el spec (header decía 2.5, config decía 2.0). 2.5 es mejor en español y mismo costo. | — Pending |
 | Schema de menú: option groups con cardinalidad + precio variable por opción (descubierto al parsear menú real de Wonder) | El spec original asumía `modifiers: [{name, price_delta}]` plano. Los menús reales tienen items sin precio base (la opción define el precio: ej. "Hamburguesa Veggie - elegí Mixta o Garbanzos") y grupos con min/max ("elegí 1 bebida", "elegí hasta 8 toppings"). Phase 1 schema y Phase 3 `confirm_order` deben modelarlo. | — Pending |
 | Horario real de Wonder: 20:00–24:00/24:30 (no 19-23h como inicialmente reportado) | Datos extraídos directamente de Pedix. Útil para system prompt + restaurant_hours seed en Phase 2. | — Pending |
+| **Pivot 2026-06-11: Fase 4 KDS → notificaciones WhatsApp** (revierte "WhatsApp diferido al MVP") | Construir el dashboard realtime se va del alcance del MVP. Más user-friendly: cuando el pedido se persiste en `orders`, el restaurante recibe un WhatsApp con el detalle (Twilio Sandbox en MVP, sin aprobación de templates Meta — el sandbox evita el bloqueo de 1-3 semanas que motivó el diferimiento original). El frontend (onboarding + menú) se mantiene como herramienta de configuración. KDS pasa a backlog v2. | Implemented |
+| Assistant de Vapi del piloto = "Alex" preexistente del usuario (no se creó uno nuevo) | El usuario ya tenía el assistant creado en su cuenta; se reconfiguró por completo vía API (voz es-AR-ElenaNeural, gemini-2.5-flash, prompt de wonder, webhook Railway). `agent_name` de wonder pasó de "Sofía" a "Alex". | Implemented |
 
 ## Evolution
 
@@ -107,4 +106,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-05-06 after initialization*
+*Last updated: 2026-06-11 after Phase 4 pivot (KDS → WhatsApp)*

@@ -62,17 +62,19 @@ Requirements for initial release. Each maps to roadmap phases. Pilot: Wonder Ham
 - [ ] **CALL-08**: El backend asigna `order_number` per-tenant via `restaurant_counters` (no `serial` global)
 - [ ] **CALL-09**: El backend persiste el pedido en `orders` con todos los campos: items, total, customer_name, customer_phone (capturado del call object), fulfillment_type, delivery_address (si aplica), call_id, transcript
 
-### Kitchen Display System (KDS)
+### Notificaciones WhatsApp (NOTIF)
 
-- [ ] **KDS-01**: El dashboard muestra todos los pedidos activos del restaurante en tiempo real (Supabase Realtime)
-- [ ] **KDS-02**: Pedidos se ordenan por `created_at` ascendente (más viejos primero)
-- [ ] **KDS-03**: Cada card muestra: número de pedido, nombre del cliente, tipo (retiro/delivery), items con modificadores, tiempo desde recepción
-- [ ] **KDS-04**: Pedidos delivery muestran dirección visible (badge o sección destacada)
-- [ ] **KDS-05**: El dueño/cocinero puede mover el pedido entre estados: NUEVO → EN PREPARACIÓN → LISTO → ENTREGADO
-- [ ] **KDS-06**: Cuando llega un pedido nuevo, suena una notificación audible
-- [ ] **KDS-07**: El dashboard funciona en tablet Android barata (responsive, touch-friendly)
-- [ ] **KDS-08**: El dashboard tiene dark mode (default activado, fácil de leer en cocina)
-- [ ] **KDS-09**: Latencia de end-of-call → orden visible en dashboard <2 segundos
+> **PIVOT 2026-06-11**: reemplaza al KDS (movido a backlog v2). El restaurante recibe los pedidos por WhatsApp en lugar de un dashboard realtime.
+
+- [ ] **NOTIF-01**: Un pedido persistido en `orders` dispara un WhatsApp al `whatsapp_number` del restaurante (Twilio WhatsApp, sandbox en MVP)
+- [ ] **NOTIF-02**: El mensaje incluye: número de pedido, nombre del cliente (y teléfono si existe), retiro/delivery con dirección, items con cantidad y modificadores, nota, y total formateado es-AR
+- [ ] **NOTIF-03**: El envío es fire-and-forget: nunca agrega latencia a la respuesta de voz ni hace fallar el pedido (errores de Twilio se loguean y se tragan)
+- [ ] **NOTIF-04**: Restaurante sin `whatsapp_number` → skip silencioso; Twilio sin configurar → un warn, flujo intacto
+- [ ] **NOTIF-05**: El dueño carga/edita su WhatsApp en el onboarding (paso 1) con validación de celular argentino (+549...)
+
+#### KDS (movido a backlog v2 por el pivot)
+
+KDS-01..09 (dashboard realtime, estados NUEVO→ENTREGADO, dark mode, tablet) quedan documentados en el historial de git y pasan al backlog v2 — no son parte del MVP.
 
 ### Billing (Mercado Pago)
 
@@ -207,15 +209,11 @@ Mapeo de requirement → fase del roadmap. Llenar después de roadmap creation.
 | CALL-07 | Phase 3 | Pending |
 | CALL-08 | Phase 3 | Pending |
 | CALL-09 | Phase 3 | Pending |
-| KDS-01 | Phase 4 | Pending |
-| KDS-02 | Phase 4 | Pending |
-| KDS-03 | Phase 4 | Pending |
-| KDS-04 | Phase 4 | Pending |
-| KDS-05 | Phase 4 | Pending |
-| KDS-06 | Phase 4 | Pending |
-| KDS-07 | Phase 4 | Pending |
-| KDS-08 | Phase 4 | Pending |
-| KDS-09 | Phase 4 | Pending |
+| NOTIF-01 | Phase 4 | Implemented (pivot 2026-06-11) |
+| NOTIF-02 | Phase 4 | Implemented (pivot 2026-06-11) |
+| NOTIF-03 | Phase 4 | Implemented (pivot 2026-06-11) |
+| NOTIF-04 | Phase 4 | Implemented (pivot 2026-06-11) |
+| NOTIF-05 | Phase 4 | Implemented (pivot 2026-06-11) |
 | BILL-01 | Phase 5 | Pending |
 | BILL-02 | Phase 5 | Pending |
 | BILL-03 | Phase 5 | Pending |

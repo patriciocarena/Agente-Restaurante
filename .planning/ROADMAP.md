@@ -7,7 +7,7 @@
 
 ## Overview
 
-SaaS multi-tenant que automatiza el teléfono del restaurante: cuando un cliente llama, una agente de voz en español rioplatense atiende, toma el pedido completo y lo entrega a la cocina vía Kitchen Display System. El roadmap recorre desde foundations multi-tenant (RLS estricta) → onboarding/menu para que el piloto Wonder pueda cargar datos reales → voice MVP end-to-end (Tier 1: Vapi + Gemini + Azure es-AR) → KDS realtime → billing real con Mercado Pago → hardening (rate limits, observabilidad, tests adversariales) → migración de costos a Tier 2 (Pipecat + Telnyx) cuando lo justifique la tracción. Phases 1-4 son ship-ready para demo; Phase 7 es un trigger fase, no secuencial.
+SaaS multi-tenant que automatiza el teléfono del restaurante: cuando un cliente llama, una agente de voz en español rioplatense atiende, toma el pedido completo y lo notifica a la cocina por WhatsApp con el detalle. El roadmap recorre desde foundations multi-tenant (RLS estricta) → onboarding/menu para que el piloto Wonder pueda cargar datos reales → voice MVP end-to-end (Tier 1: Vapi + Gemini + Azure es-AR) → notificaciones WhatsApp (PIVOT 2026-06-11, ex-KDS) → billing real con Mercado Pago → hardening (rate limits, observabilidad, tests adversariales) → migración de costos a Tier 2 (Pipecat + Telnyx) cuando lo justifique la tracción. Phases 1-4 son ship-ready para demo; Phase 7 es un trigger fase, no secuencial.
 
 ## Phases
 
@@ -19,7 +19,7 @@ SaaS multi-tenant que automatiza el teléfono del restaurante: cuando un cliente
 - [ ] **Phase 1: Foundations** - Monorepo, Supabase schema + RLS estricta, auth, deploy targets, MP client stub
 - [ ] **Phase 2: Onboarding & Menu** - Wizard de signup + RestaurantSetup (horario, zonas, voice config) + MenuEditor con disponibilidad mid-shift
 - [ ] **Phase 3: Voice MVP (Tier 1)** - Vapi assistant lifecycle + webhook con HMAC + idempotencia + recálculo server-side de totales
-- [ ] **Phase 4: Kitchen Display (KDS)** - Dashboard realtime, dark mode, transición de estados, sonido de notificación, responsive tablet (MVP demo target)
+- [ ] **Phase 4: WhatsApp Order Notifications** - Pedido confirmado → WhatsApp al restaurante con el detalle (PIVOT 2026-06-11: reemplaza KDS; MVP demo target)
 - [ ] **Phase 5: Billing real (Mercado Pago)** - Preapproval, webhook MP, suspensión + reactivación, grace period, historial de cobros
 - [ ] **Phase 6: Hardening + Observability** - Rate limits, latency NFR <800ms, tests adversariales prompt injection es-AR, dashboard de uso/costos, holiday flag
 - [ ] **Phase 7: Cost Optimization Migration (Tier 2)** - Vapi → Pipecat + Twilio → Telnyx (TRIGGERED: ≥3 paying customers OR infra cost > $500/mo)
@@ -72,17 +72,18 @@ Plans:
 **Plans**: 6 plans
 **Research flag**: yes — Vapi exact SDK syntax for Azure es-AR voice, Gemini 2.5 Flash model string supported by Vapi, voice barge-in defaults. Validar Gemini Native Audio status para decidir si hay shortcut a Tier 3.
 
-### Phase 4: Kitchen Display (KDS)
-**Goal**: La cocina ve los pedidos llegar en tiempo real en una tablet, distingue retiro vs delivery, y mueve cada pedido por sus estados.
+### Phase 4: WhatsApp Order Notifications
+> **PIVOT 2026-06-11**: KDS reemplazado por notificaciones WhatsApp (decisión del usuario — construir el dashboard realtime se va del alcance; el WhatsApp es más user-friendly para el restaurante). KDS movido a backlog v2.
+
+**Goal**: Cuando la agente confirma un pedido y se persiste en la DB, el restaurante recibe un WhatsApp con el detalle completo en <30 segundos.
 **Depends on**: Phase 3
-**Requirements**: KDS-01, KDS-02, KDS-03, KDS-04, KDS-05, KDS-06, KDS-07, KDS-08, KDS-09
+**Requirements**: NOTIF-01, NOTIF-02, NOTIF-03, NOTIF-04, NOTIF-05
 **Success Criteria** (what must be TRUE):
-  1. Un pedido nuevo creado en Phase 3 aparece en el dashboard de la cocina en <2 segundos del fin de la llamada, con sonido de notificación audible
-  2. Cada card muestra número de pedido, nombre del cliente, tipo (retiro/delivery), items con modificadores, tiempo desde recepción — pedidos delivery muestran dirección destacada
-  3. El cocinero/dueño puede mover un pedido NUEVO → EN PREPARACIÓN → LISTO → ENTREGADO con un toque y el cambio se sincroniza realtime entre múltiples dispositivos
-  4. El dashboard se ve y funciona correctamente en tablet Android barata: dark mode default, responsive, touch-friendly, ordenado por `created_at` ascendente
-**Plans**: 6 plans
-**UI hint**: yes
+  1. Un pedido insertado en `orders` dispara un WhatsApp al `whatsapp_number` del restaurante con: número de pedido, cliente (y teléfono si hay), retiro/delivery (+dirección), items con cantidad y modificadores, y total
+  2. El envío es fire-and-forget: nunca agrega latencia a la respuesta de voz ni hace fallar el pedido si Twilio está caído
+  3. Restaurante sin `whatsapp_number` configurado → no se envía nada y nada se rompe (skip silencioso)
+  4. El dueño puede cargar/editar su WhatsApp (validación de celular AR) desde el onboarding
+**Plans**: ejecutado inline (plan aprobado en sesión 2026-06-11)
 **MVP demo gate**: ✅ Al cierre de Phase 4, el sistema es demoable end-to-end con Wonder. Phases 5-7 son post-demo.
 
 ### Phase 5: Billing real (Mercado Pago)
@@ -132,7 +133,7 @@ Phases 1 → 2 → 3 → 4 (MVP demo gate) → 5 → 6 → [TRIGGER] → 7
 | 1. Foundations | 1/5 | In Progress|  |
 | 2. Onboarding & Menu | 2/6 | In Progress|  |
 | 3. Voice MVP (Tier 1) | 0/TBD | Not started | - |
-| 4. Kitchen Display (KDS) | 0/TBD | Not started | - |
+| 4. WhatsApp Notifications | inline | In Progress | - |
 | 5. Billing real (MP) | 0/TBD | Not started | - |
 | 6. Hardening + Observability | 0/TBD | Not started | - |
 | 7. Cost Optimization (Tier 2) | 0/TBD | Triggered (waiting) | - |
